@@ -20,11 +20,13 @@ CKEDITOR.plugins.add( 'wsc', {
 		// SpellChecker doesn't work in Opera and with custom domain
 		command.modes = { wysiwyg: ( !CKEDITOR.env.opera && !CKEDITOR.env.air && document.domain == window.location.hostname ) };
 
-		editor.ui.addButton && editor.ui.addButton( 'SpellChecker', {
-			label: editor.lang.wsc.toolbar,
-			command: commandName,
-			toolbar: 'spellchecker,10'
-		});
+		if(typeof editor.plugins.scayt == 'undefined'){
+			editor.ui.addButton && editor.ui.addButton( 'SpellChecker', {
+				label: editor.lang.wsc.toolbar,
+				command: commandName,
+				toolbar: 'spellchecker,10'
+			});
+		}
 		CKEDITOR.dialog.add( commandName, this.path + 'dialogs/wsc.js' );
 	}
 });
