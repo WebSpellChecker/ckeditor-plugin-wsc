@@ -15,6 +15,11 @@ CKEDITOR.plugins.add( 'wsc', {
 	init: function( editor ) {
 		var commandName = 'checkspell';
 
+		var strNormalDialog = 'dialogs/wsc.js',
+			strIeDialog = 'dialogs/wsc_ie.js',
+			strDialog;
+		
+
 		var command = editor.addCommand( commandName, new CKEDITOR.dialogCommand( commandName ) );
 
 		// SpellChecker doesn't work in Opera and with custom domain
@@ -27,9 +32,29 @@ CKEDITOR.plugins.add( 'wsc', {
 				toolbar: 'spellchecker,10'
 			});
 		}
-		CKEDITOR.dialog.add( commandName, this.path + 'dialogs/wsc.js' );
-	}
-});
 
+		
+		if ( CKEDITOR.env.ie && CKEDITOR.env.version <= 8 ){
+			strDialog = strIeDialog;
+		} else {
+			if (!window.postMessage) {
+				strDialog = strIeDialog;
+			} else {
+				strDialog = strNormalDialog;
+				var	protocol = document.location.protocol || 'http:';
+				var wscCoreUrl = CKEDITOR.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + CKEDITOR.config.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
+				CKEDITOR.scriptLoader.load(wscCoreUrl);
+			};
+		};
+
+		CKEDITOR.dialog.add( commandName, this.path + strDialog );
+	}
+
+});
+																	
 CKEDITOR.config.wsc_customerId = CKEDITOR.config.wsc_customerId || '1:ua3xw1-2XyGJ3-GWruD3-6OFNT1-oXcuB1-nR6Bp4-hgQHc-EcYng3-sdRXG3-NOfFk';
-CKEDITOR.config.wsc_customLoaderScript = CKEDITOR.config.wsc_customLoaderScript || null;
+CKEDITOR.config.wsc_customDictionaryIds = CKEDITOR.config.wsc_customDictionaryIds || '';
+CKEDITOR.config.wsc_userDictionaryName = CKEDITOR.config.wsc_userDictionaryName || '';
+CKEDITOR.config.wsc_cmd = CKEDITOR.config.wsc_cmd || 'spell'; // spell, thes or grammar. default tab
+
+
