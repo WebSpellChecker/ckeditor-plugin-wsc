@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
-
+//--------------------------------------------------------------------------------------------------
 /** ManagerPostMessage
  *************************/
 var ManagerPostMessage = function() {
@@ -20,7 +20,7 @@ var ManagerPostMessage = function() {
 		fn = o.fn || null;
 		id = o.id || '';
 		target = o.target || window;
-		message = o.message || {	
+		message = o.message || {
 			'id': id
 		};
 
@@ -54,8 +54,8 @@ var tools = {
 		}
 	},
 	 filter4html: function(str) {
-        return str.replace(/"/g, "&quot;").replace(/'/g, "&#146;");
-    },
+		return str.replace(/"/g, "&quot;").replace(/'/g, "&#146;");
+	},
 	setCookie: function(name, value, options) {
 	  options = options || {};
 
@@ -66,7 +66,7 @@ var tools = {
 	    d.setTime(d.getTime() + expires*1000);
 	    expires = options.expires = d;
 	  }
-	  if (expires && expires.toUTCString) { 
+	  if (expires && expires.toUTCString) {
 	  	options.expires = expires.toUTCString();
 	  }
 
@@ -76,8 +76,8 @@ var tools = {
 
 	  for(var propName in options) {
 	    updatedCookie += "; " + propName;
-	    var propValue = options[propName];    
-	    if (propValue !== true) { 
+	    var propValue = options[propName];
+	    if (propValue !== true) {
 	      updatedCookie += "=" + propValue;
 	     }
 	  }
@@ -204,7 +204,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		};
 	};
 
-	
+
 	NS.load = true;
 	NS.cmd = {
 		"SpellTab": 'spell',
@@ -248,7 +248,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			tabID, iframe;
 
 		NS.setIframe(that, currentTab);
-		
+
 	};
 
 	NS.sendData = function() {
@@ -276,7 +276,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				NS.setIframe(that, currentTab);
 				iframe = document.getElementById(tabID);
 
-			/*	iframe.onload = function() {
+				/*iframe.onload = function() {
 					NS.targetFromFrame[tabID] = iframe.contentWindow;
 					//sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab], null);
 				};*/
@@ -332,36 +332,36 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 	};
 
-	NS.buildOptionLang = function(key) { 
+	NS.buildOptionLang = function(key) {
 		var id = "wscLang" + NS.CKNumber;
 		var select = document.getElementById(id),
-			create_option, txt_option;
+			fragment = document.createDocumentFragment(),
+			create_option, txt_option,
+			sort = [];
 
 		if(select.options.length === 0) {
 			for (var lang in key) {
+				sort.push([lang, key[lang]]);
+			};
+			sort.sort();
+
+			for (var i = 0; i < sort.length; i++) {
 				create_option=document.createElement("option");
-				create_option.setAttribute("value", key[lang]);
-				txt_option = document.createTextNode(lang);
+				create_option.setAttribute("value", sort[i][1]);
+				txt_option = document.createTextNode(sort[i][0]);
 				create_option.appendChild(txt_option);
-				
-				if (key[lang] == NS.selectingLang) {
-				    create_option.selected = true;
+
+				if (sort[i][1] == NS.selectingLang) {
+					create_option.setAttribute("selected", "selected");
 				};
 
-				select.appendChild(create_option);
+				fragment.appendChild(create_option);
 			};
+			select.appendChild(fragment);
 		};
-
-		for (var i = 0; i < select.options.length; i++) {
-		    if (select.options[i].value == NS.selectingLang) {
-			    select.options[i].selected = true;
-			};
-			continue;
-		};
-		
 	};
 
-	// banner add 
+	// banner add
 	var setBannerInPlace = function(htmlBanner) {
 		var findBannerPlace = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'banner').getElement();
 		findBannerPlace.setHtml(htmlBanner);
@@ -465,7 +465,7 @@ var langConstructor = function(lang) {
 
 	NS.buildOptionLang(langSelectBox.setLangList);
 
-	//tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
+	tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
 
 	selectContainer.onchange = function(e){
 		e = e || window.event;
@@ -475,7 +475,7 @@ var langConstructor = function(lang) {
 		NS.selectingLang = this.value;
 
 		manageMessage.send({
-		 	'message': { 
+		 	'message': {
 		 		'changeLang': NS.selectingLang,
 		 		'text': NS.dataTemp
 		 	},
@@ -484,7 +484,7 @@ var langConstructor = function(lang) {
 		});
 		//NS.div_overlay.setDisable();
 	};
-	
+
 };
 
 var disableButtonSuggest = function(word) {
@@ -492,7 +492,7 @@ var disableButtonSuggest = function(word) {
 		word = 'No suggestions';
 		NS.LocalizationButton['ChangeTo'].instance.disable();
 		NS.LocalizationButton['ChangeAll'].instance.disable();
-		
+
 		// hack for css disable button ckeditor 4
 		function styleDisable(/* string */instanceButton) {
 			var button = NS.LocalizationButton[instanceButton].instance;
@@ -510,7 +510,7 @@ var disableButtonSuggest = function(word) {
 		NS.LocalizationButton['ChangeAll'].instance.getElement().setStyle('color', '#333');
 		return word;
 	};
-	
+
 };
 
 	var handlerId = {
@@ -524,7 +524,7 @@ var disableButtonSuggest = function(word) {
 			sendData(NS.targetFromFrame[tabId], NS.cmd[currentTab]);
 		},
 
-		suggestlist: function(response) {			
+		suggestlist: function(response) {
 			delete response.id;
 			NS.div_overlay_no_check.setDisable();
 			hideCurrentFinishChecking();
@@ -539,8 +539,8 @@ var disableButtonSuggest = function(word) {
 
 			};
 			word = word.split(',');
-			
-			
+
+
 			//NS.langSelectbox = new __constructLangSelectbox(NS.langList);
 
 			//tabView[NS.langSelectbox.getCurrentLangGroup(NS.selectingLang)]();
@@ -551,21 +551,21 @@ var disableButtonSuggest = function(word) {
 
 			selectNode.clear();
 			NS.textNode['SpellTab'].setValue(suggestionsList[0]);
-		
+
 			for (var item = 0; item < suggestionsList.length; item++) {
 				selectNode.add(suggestionsList[item], suggestionsList[item]);
 			};
-			
+
 			showCurrentTabs();
 			//NS.div_overlay.setEnable();
 			NS.div_overlay.setDisable();
-			
+
 		},
 
 		grammerSuggest: function(response) {
 			delete response.id;
 //			NS.langList = response.mocklangs;
-			
+
 //			langConstructor(NS.langList);
 			delete response.mocklangs;
 
@@ -613,13 +613,13 @@ var disableButtonSuggest = function(word) {
 			NS.selectNode['categories'].getInputElement().getChildren().$[0].selected = true;
 
 			NS.buildOptionSynonyms(synKey);
-			
+
 			showCurrentTabs();
 			NS.div_overlay.setDisable();
 		},
 		finish: function(response) {
 			delete response.id;
-			
+
 			hideCurrentTabs();
 			showCurrentFinishChecking();
 			NS.div_overlay.setDisable();
@@ -635,7 +635,7 @@ var disableButtonSuggest = function(word) {
 		ReplaceText: function(response) {
 			delete response.id;
 			NS.div_overlay.setEnable();
-		
+
 			NS.dataTemp = response.text;
 			NS.selectingLang = response.currentLang;
 
@@ -645,9 +645,9 @@ var disableButtonSuggest = function(word) {
 
 			SetLocalizationButton(NS.LocalizationButton);
 			SetLocalizationLabel(NS.LocalizationLabel);
-			
+
 		},
-		
+
 		options_checkbox_send: function(response) {
 			delete response.id;
 
@@ -658,7 +658,7 @@ var disableButtonSuggest = function(word) {
 				'cust_dic_ids': NS.cust_dic_ids
 				//'udnCmd': tools.getCookie('udnCmd')
 			}
-			
+
 			var currentTabId = NS.dialog._.currentTabId,
 				frameId = NS.iframeNumber + '_' + currentTabId;
 
@@ -666,7 +666,7 @@ var disableButtonSuggest = function(word) {
 				'message': obj,
 				'target': NS.targetFromFrame[frameId],
 				'id': 'options_outer__page'
-			});		
+			});
 		},
 
 		getOptions: function(response) {
@@ -693,7 +693,7 @@ var disableButtonSuggest = function(word) {
 					manageMessage.send({
 						'message': obj,
 						'target': NS.targetFromFrame[frameId]
-					});	
+					});
 
 				} else{
 					udn = '';
@@ -707,7 +707,7 @@ var disableButtonSuggest = function(word) {
 
 			manageMessage.send({
 				'id': 'giveOptions'
-			});	
+			});
 		},
 
 		options_dic_send: function(response) {
@@ -728,7 +728,7 @@ var disableButtonSuggest = function(word) {
 			manageMessage.send({
 				'message': obj,
 				'target': NS.targetFromFrame[frameId]
-			});	
+			});
 		},
 		data: function(response) {
 			delete response.id; // fix from ie9
@@ -770,7 +770,7 @@ var disableButtonSuggest = function(word) {
 
 	var handlerButtonOptions = function(event) {
 		event = event || window.event;
-		
+
 		var currentTabId = NS.dialog._.currentTabId,
 			frameId = NS.iframeNumber + '_' + currentTabId;
 
@@ -807,7 +807,7 @@ var disableButtonSuggest = function(word) {
 		cmd = cmd || CKEDITOR.config.wsc_cmd || 'spell';
 		reset_suggest = reset_suggest || false;
 		sendText = sendText || NS.dataTemp;
-	
+
 		manageMessage.send({
 			'message': {
 				'customerId': NS.wsc_customerId,
@@ -828,7 +828,7 @@ NS.div_overlay.setEnable();
 	var tabView = {
 	    "superset" : function() {
 	    	showThesaurusTab();
-	    	showGrammTab();	
+	    	showGrammTab();
 	    	showSpellTab();
 	    },
 	    "usual"    : function() {
@@ -840,7 +840,7 @@ NS.div_overlay.setEnable();
 
 	var showFirstTab = function() {
 
-		
+
 
 
 		var cmdManger = function(cmdView) {
@@ -855,7 +855,7 @@ NS.div_overlay.setEnable();
 				getCmdByTab: _getCmd
 			}
 		};
-		
+
 		var cmdM = new cmdManger(NS.cmd);
 		NS.dialog.selectPage(cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd));
 		NS.sendData();
@@ -922,9 +922,9 @@ NS.div_overlay.setEnable();
 
 
 function __constructLangSelectbox(languageGroup) {
-	    
+
     if ( !languageGroup ) throw "Languages-by-groups list are required for construct selectbox";
-      
+
     var that = this,
         o_arr = [],
         priorLang ="en_US",
@@ -940,21 +940,21 @@ function __constructLangSelectbox(languageGroup) {
             else
                 o_arr.push( langName );
         }
-            
+
     }
-    
+
     o_arr.sort();
     if(priorLangTitle) {
 		o_arr.unshift( priorLangTitle );
     };
- 
+
     var searchGroup = function ( code ){
         for ( var group in languageGroup){
             for ( var langCode in languageGroup[group]){
                 if ( langCode.toUpperCase() === code.toUpperCase() )
                     return group;
             };
-            
+
         };
         return "";
     };
@@ -969,18 +969,18 @@ function __constructLangSelectbox(languageGroup) {
     	};
     	return langList;
     };
-    
-    
+
+
     var _return = {
 		getCurrentLangGroup: function(code) {
 			return searchGroup(code);
 		},
 		setLangList: _setLangList()
     };
-    
-    
+
+
     return _return;
-    
+
 };
 
 	return {
@@ -1009,11 +1009,11 @@ function __constructLangSelectbox(languageGroup) {
 				target: this.parts.tabs.getParent().$
 			});
 			//NS.div_overlay.setDisable();
-			
+
 			//NS.sendData();
 			var number_ck = NS.CKNumber + 1,
 				id_tab = CKEDITOR.document.getById('cke_dialog_tabs_' + number_ck);
-				
+
 			id_tab.setStyle('width', '97%');
 			id_tab.append(NS.buildSelectLang());
 
@@ -1032,8 +1032,8 @@ function __constructLangSelectbox(languageGroup) {
 			};
 		},
 		onHide: function() {
-			//var firstTabId = NS.iframeNumber + '_SpellTab'; 
-			//sendData(NS.targetFromFrame[firstTabId], null, NS.dataTemp, true); 
+			//var firstTabId = NS.iframeNumber + '_SpellTab';
+			//sendData(NS.targetFromFrame[firstTabId], null, NS.dataTemp, true);
 			/*manageMessage.send({
 			 	'message': { 'changeLang': NS.selectingLang},
 				'target': NS.targetFromFrame[firstTabId],
@@ -1042,7 +1042,7 @@ function __constructLangSelectbox(languageGroup) {
 			NS.dataTemp = null;
 		},
 		contents: [
-          	{
+			{
 			id: 'SpellTab',
 			label: 'SpellChecker',
 			accessKey: 'S',
@@ -1051,15 +1051,16 @@ function __constructLangSelectbox(languageGroup) {
 				type: 'html',
 				id: 'banner',
 				label: 'banner',
+				style: '', //TODO
 				html: '<div></div>'
 			},
-                    {
+			{
 				type: 'html',
 				id: 'Content',
 				label: 'spellContent',
 				html: '',
 				onLoad: function() {
-					//NS.setCurrentIframe(NS.dialog._.currentTabId); 
+					//NS.setCurrentIframe(NS.dialog._.currentTabId);
 					var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
 					var iframe = document.getElementById(tabId);
 					NS.targetFromFrame[tabId] = iframe.contentWindow;
@@ -1257,9 +1258,16 @@ function __constructLangSelectbox(languageGroup) {
 							style: 'width: 100%;',
 							onLoad: function() {
 								NS.LocalizationButton['Options'].instance = this;
+								if (document.location.protocol == "file:") {
+									this.disable();
+								}
 							},
 							onClick: function() {
-								editor.openDialog('options');
+								if (document.location.protocol == "file:") {
+									alert('WSC: Options functionality is disabled when runing from file system');
+								} else {
+									editor.openDialog('options');
+								};
 							}
 						}
                                         ]
@@ -1322,9 +1330,17 @@ function __constructLangSelectbox(languageGroup) {
 							style: 'width: 100%;',
 							onLoad: function() {
 								this.getElement().setAttribute("title-cmd", this.id);
+								if (document.location.protocol == "file:") {
+									this.disable();
+								}
 							},
 							onClick: function() {
-								editor.openDialog('options');
+								if (document.location.protocol == "file:") {
+									alert('WSC: Options functionality is disabled when runing from file system');
+								} else {
+									editor.openDialog('options');
+								};
+
 							}
 						},
                                             {
@@ -1355,6 +1371,7 @@ function __constructLangSelectbox(languageGroup) {
 				type: 'html',
 				id: 'banner',
 				label: 'banner',
+				style: '', //TODO
 				html: '<div></div>'
 			},
                     {
@@ -1540,6 +1557,7 @@ function __constructLangSelectbox(languageGroup) {
 					type: 'html',
 					id: 'banner',
 					label: 'banner',
+					style: '', //TODO
 					html: '<div></div>'
 				},
                     {
@@ -1754,7 +1772,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 	var ospString = null;
 	var OptionsTextError = null;
 	var cmd = null;
-	
+
 	var set_osp = [];
 	var dictionaryState = {
 		'udn': tools.getCookie('udn'),
@@ -1764,8 +1782,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 	}
 
 	var setHandlerOptions = function() {
-		var osp = tools.getCookie('osp');
-			strToArr =  osp.split('');
+		var osp = tools.getCookie('osp'),
+			strToArr =  osp.split("");
+
 
 		checkboxState['IgnoreAllCapsWords']		= strToArr[0];
 		checkboxState['IgnoreWordsNumbers']		= strToArr[1];
@@ -1822,7 +1841,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 			'id': 'options_checkbox_send'
 		});
 
-		
+
 	};
 
 	var cameOptions = function() {

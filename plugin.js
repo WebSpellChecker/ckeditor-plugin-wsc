@@ -18,7 +18,7 @@ CKEDITOR.plugins.add( 'wsc', {
 		var strNormalDialog = 'dialogs/wsc.js',
 			strIeDialog = 'dialogs/wsc_ie.js',
 			strDialog;
-		
+
 
 		var command = editor.addCommand( commandName, new CKEDITOR.dialogCommand( commandName ) );
 
@@ -33,7 +33,7 @@ CKEDITOR.plugins.add( 'wsc', {
 			});
 		}
 
-		
+
 		if ( CKEDITOR.env.ie && CKEDITOR.env.version <= 8 ){
 			strDialog = strIeDialog;
 		} else {
@@ -41,7 +41,7 @@ CKEDITOR.plugins.add( 'wsc', {
 				strDialog = strIeDialog;
 			} else {
 				strDialog = strNormalDialog;
-				var	protocol = document.location.protocol || 'http:';
+				var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
 				var wscCoreUrl = CKEDITOR.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + CKEDITOR.config.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
 				CKEDITOR.scriptLoader.load(wscCoreUrl);
 			};
@@ -51,7 +51,7 @@ CKEDITOR.plugins.add( 'wsc', {
 	}
 
 });
-																	
+
 CKEDITOR.config.wsc_customerId = CKEDITOR.config.wsc_customerId || '1:ua3xw1-2XyGJ3-GWruD3-6OFNT1-oXcuB1-nR6Bp4-hgQHc-EcYng3-sdRXG3-NOfFk';
 CKEDITOR.config.wsc_customDictionaryIds = CKEDITOR.config.wsc_customDictionaryIds || '';
 CKEDITOR.config.wsc_userDictionaryName = CKEDITOR.config.wsc_userDictionaryName || '';
