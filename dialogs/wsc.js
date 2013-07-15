@@ -2,17 +2,16 @@
  * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
-//--------------------------------------------------------------------------------------------------
-/** ManagerPostMessage
- *************************/
-var ManagerPostMessage = function() {
-	var _init = function(handler) {
+  // Create support tools 
+ var appTools = (function(){
+ 	var _init = function(handler) {
 		if (document.addEventListener) {
 			window.addEventListener('message', handler, false);
 		} else {
 			window.attachEvent("onmessage", handler);
 		};
 	};
+
 	var _sendCmd = function(o) {
 		var str,
 		type = Object.prototype.toString,
@@ -33,30 +32,18 @@ var ManagerPostMessage = function() {
 		target.postMessage(str, '*');
 	};
 
-	return {
-		init: _init,
-		send: _sendCmd
-	}
-};
+	var _hashCreate = function(o, fn) {
+		fn = fn || null;
+		var str = JSON.stringify(o, fn);
+		return str;
+	};
 
-/** Tools
- *************************/
-var tools = {
-	hash: {
-		create: function(o, fn) {
-			var fn = fn || null;
-			var str = JSON.stringify(o, fn);
-			return str;
-		},
-		parse: function(str, fn) {
-			var fn = fn || null;
-			return JSON.parse(str, fn);
-		}
-	},
-	 filter4html: function(str) {
-		return str.replace(/"/g, "&quot;").replace(/'/g, "&#146;");
-	},
-	setCookie: function(name, value, options) {
+	var _hashParse = function(str, fn) {
+		fn = fn || null;
+		return JSON.parse(str, fn);
+	};
+
+	var setCookie = function(name, value, options) {
 	  options = options || {};
 
 	  var expires = options.expires;
@@ -71,121 +58,136 @@ var tools = {
 	  }
 
 	  value = encodeURIComponent(value);
-
 	  var updatedCookie = name + "=" + value;
 
 	  for(var propName in options) {
-	    updatedCookie += "; " + propName;
-	    var propValue = options[propName];
+	  	var propValue = options[propName];
+	    	updatedCookie += "; " + propName;
 	    if (propValue !== true) {
-	      updatedCookie += "=" + propValue;
-	     }
-	  }
-
+			updatedCookie += "=" + propValue;
+		};
+	  };
 	  document.cookie = updatedCookie;
-	},
-	getCookie: function(name) {
+	};
+
+	var getCookie = function(name) {
 	  var matches = document.cookie.match(new RegExp(
 	    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
 	  ));
 	  return matches ? decodeURIComponent(matches[1]) : undefined;
-	},
-	deleteCookie: function(name) {
-	  setCookie(name, "", { expires: -1 })
-	}
-};
-
-var optionsDataObject = {};
-var NS = {};
-var nameNode = null;
-NS.targetFromFrame = {};
-//NS.currentLang = CKEDITOR.config.wsc_lang || 'en_US';
-NS.wsc_customerId = CKEDITOR.config.wsc_customerId;
-NS.cust_dic_ids = CKEDITOR.config.wsc_customDictionaryIds;
-NS.userDictionaryName = CKEDITOR.config.wsc_userDictionaryName;
-NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
-NS.LocalizationComing = {};
-
-function OptionsConfirm(state) {
-	if (state) {
-		nameNode.setValue('');
 	};
-};
 
-CKEDITOR.dialog.add('checkspell', function(editor) {
+	var deleteCookie = function(name) {
+	  setCookie(name, "", { expires: -1 })
+	};
 
-	CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
-	    var dialogDefinition = dialogDefinitionEvent.data.definition;
-	    dialogDefinition.dialog.on('cancel', function(cancelEvent) {
-	        return false;
-	    }, this, null, -1);
-	});
-
-	/* NameSpace Plugin
-	 *************************/
-	NS.CKNumber = CKEDITOR.tools.getNextNumber();
-	NS.iframeNumber = 'cke_frame_' + NS.CKNumber;
-	NS.TextAreaNumber = 'cke_textarea_' + NS.CKNumber;
-	NS.pluginPath = CKEDITOR.getUrl(editor.plugins.wsc.path);
-	NS.logotype = DefaultParams.logoPath;
-	NS.templatePath = NS.pluginPath + 'dialogs/tmp.html';
-	NS.div_overlay_no_check = null;
-	NS.loadIcon = DefaultParams.iconPath;
-	NS.loadIconEmptyEditor = DefaultParams.iconPathEmptyEditor;
-	NS.LangComparer = new _SP_FCK_LangCompare();
-	NS.LangComparer.setDefaulLangCode( NS.defaultLanguage );
-	NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode );
-	NS.LocalizationButton = {
-		'ChangeTo': {
-			'instance' : null,
-			'text' : 'Change to'
+	return {
+		postMessage: {
+			init: _init,
+			send: _sendCmd
 		},
+		hash: {
+			create: function() {
+				console.log(create);
+			},
 
-		'ChangeAll': {
-			'instance' : null,
-			'text' : 'Change All'
-		},
-
-		'IgnoreWord': {
-			'instance' : null,
-			'text' : 'Ignore word'
-		},
-
-		'IgnoreAllWords': {
-			'instance' : null,
-			'text' : 'Ignore all words'
-		},
-
-		'Options': {
-			'instance' : null,
-			'text' : 'Options',
-			'optionsDialog': {
-				'instance' : null
+			parse: function() {
+				console.log(parse);
 			}
 		},
-
-		'AddWord': {
-			'instance' : null,
-			'text' : 'Add word'
-		},
-
-		'FinishChecking': {
-			'instance' : null,
-			'text' : 'Finish Checking'
+		cookie: {
+			set: setCookie,
+			get: getCookie,
+			remove: deleteCookie
 		}
-	};
+	}
+ })();
 
-	NS.LocalizationLabel = {
-		'ChangeTo': {
-			'instance' : null,
-			'text' : 'Change to'
-		},
 
-		'Suggestions': {
-			'instance' : null,
-			'text' : 'Suggestions'
-		}
-	};
+	var NS = NS || {};
+		NS.TextAreaNumber = null;
+		NS.load = true;
+		NS.cmd = {
+			"SpellTab": 'spell',
+			"Thesaurus": 'thes',
+			"GrammTab": 'grammar'
+		};
+		NS.dialog = null;
+		NS.optionNode = null;
+		NS.selectNode = null;
+		NS.grammerSuggest = null;
+		NS.textNode = {};
+		NS.iframeMain = null;
+		NS.dataTemp = '';
+		NS.div_overlay = null;
+		NS.textNodeInfo = {};
+		NS.selectNode = {};
+		NS.selectNodeResponce = {};
+		NS.selectingLang = NS.currentLang;
+		NS.langList = null;
+		NS.langSelectbox = null;
+		NS.banner = '';
+		NS.show_grammar = null;
+		NS.div_overlay_no_check = null;
+		NS.wsc_customerId =  CKEDITOR.config.wsc_customerId;
+		NS.cust_dic_ids = CKEDITOR.config.wsc_customDictionaryIds;
+		NS.userDictionaryName = CKEDITOR.config.wsc_userDictionaryName;
+		NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
+		NS.targetFromFrame = {};
+		NS.onLoadOverlay = null;
+		NS.LocalizationComing = {};
+		NS.OverlayPlace = null;
+		NS.LocalizationButton = {
+			'ChangeTo': {
+				'instance' : null,
+				'text' : 'Change to'
+			},
+
+			'ChangeAll': {
+				'instance' : null,
+				'text' : 'Change All'
+			},
+
+			'IgnoreWord': {
+				'instance' : null,
+				'text' : 'Ignore word'
+			},
+
+			'IgnoreAllWords': {
+				'instance' : null,
+				'text' : 'Ignore all words'
+			},
+
+			'Options': {
+				'instance' : null,
+				'text' : 'Options',
+				'optionsDialog': {
+					'instance' : null
+				}
+			},
+
+			'AddWord': {
+				'instance' : null,
+				'text' : 'Add word'
+			},
+
+			'FinishChecking': {
+				'instance' : null,
+				'text' : 'Finish Checking'
+			}
+		};
+
+		NS.LocalizationLabel = {
+			'ChangeTo': {
+				'instance' : null,
+				'text' : 'Change to'
+			},
+
+			'Suggestions': {
+				'instance' : null,
+				'text' : 'Suggestions'
+			}
+		};
 
 	var SetLocalizationButton = function(obj) {
 
@@ -203,33 +205,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			obj[i].instance.setLabel(NS.LocalizationComing[i]);
 		};
 	};
-
-
-	NS.load = true;
-	NS.cmd = {
-		"SpellTab": 'spell',
-		"Thesaurus": 'thes',
-		"GrammTab": 'grammar'
+	function OptionsConfirm(state) {
+		if (state) {
+			nameNode.setValue('');
+		};
 	};
-	NS.dialog = null;
-	NS.optionNode = null;
-	NS.selectNode = null;
-	NS.grammerSuggest = null;
-	NS.textNode = {};
-	NS.iframeMain = null;
-	NS.dataTemp = '';
-	NS.div_overlay = null;
-	NS.textNodeInfo = {};
-	NS.selectNode = {};
-	NS.selectNodeResponce = {};
-	NS.selectingLang = NS.currentLang;//NS.LangComparer.getSPLangCode( NS.currentLang ) || NS.LangComparer.getDefaulLangCode();
-	NS.langList = null;
-	NS.serverLocationHash = DefaultParams.serviceHost;
-	NS.serverLocation = '#server=' + NS.serverLocationHash;
-	NS.langSelectbox = null;
-	NS.banner = '';
-
-	var manageMessage = null;
 	iframeOnload = false;
 
 
@@ -239,7 +219,8 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 	};
 
 	NS.setIframe = function(that, nameTab) {
-		var str = NS.framesetHtml(nameTab);
+		var str = NS.framesetHtml(nameTab),
+			iframeId = NS.iframeNumber + nameTab;
 		return that.getElement().setHtml(str);
 	};
 
@@ -251,7 +232,26 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 	};
 
-	NS.sendData = function() {
+	NS.setHeightBannerFrame = function() {
+		var height = "90px",
+			bannerPlaceSpellTab = NS.dialog.getContentElement('SpellTab', 'banner').getElement(),
+			bannerPlaceGrammTab = NS.dialog.getContentElement('GrammTab', 'banner').getElement(),
+			bannerPlaceThesaurus = NS.dialog.getContentElement('Thesaurus', 'banner').getElement();
+
+		bannerPlaceSpellTab.setStyle('height', height);
+		bannerPlaceGrammTab.setStyle('height', height);
+		bannerPlaceThesaurus.setStyle('height', height);
+	};
+
+	NS.setHeightFrame = function() {
+		var currentTab = NS.dialog._.currentTabId,
+			tabID = NS.iframeNumber + '_' + currentTab,
+			iframe = document.getElementById(tabID);
+
+		iframe.style.height = '240px';
+	};
+
+	/*NS.sendData = function() {
 		var currentTab = NS.dialog._.currentTabId,
 			that = NS.dialog._.contents[currentTab].Content,
 			tabID, iframe;
@@ -271,35 +271,48 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			that = NS.dialog._.contents[currentTab].Content;
 			tabID = NS.iframeNumber + '_' + currentTab;
 
-
 			if (that.getElement().$.children.length == 0) {
 				NS.setIframe(that, currentTab);
 				iframe = document.getElementById(tabID);
-
-				/*iframe.onload = function() {
-					NS.targetFromFrame[tabID] = iframe.contentWindow;
-					//sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab], null);
-				};*/
 				NS.targetFromFrame[tabID] = iframe.contentWindow;
-				//NS.div_overlay.setDisable();
 			} else {
 				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
-				//NS.div_overlay.setDisable();
 			};
 		});
 
-	};
+	};*/
 
-	NS.buildOptionSynonyms = function(key) {
-		var syn = NS.selectNodeResponce[key];
-		NS.selectNode['synonyms'].clear();
+	NS.sendData = function(scope) {
+		var currentTab = scope._.currentTabId,
+			that = scope._.contents[currentTab].Content,
+			tabID, iframe;
 
-		for (var item = 0; item < syn.length; item++) {
-			NS.selectNode['synonyms'].add(syn[item], syn[item]);
-		};
+			
+		NS.setIframe(that, currentTab);
+		scope.parts.tabs.removeAllListeners();
+		
 
-		NS.selectNode['synonyms'].getInputElement().$.firstChild.selected = true;
-		NS.textNode['Thesaurus'].setValue(NS.selectNode['synonyms'].getInputElement().getValue())
+		scope.parts.tabs.on('click', function(event) {
+			event = event || window.event;
+			if (!event.data.getTarget().is('a')) {
+				return
+			};
+
+			if (currentTab == scope._.currentTabId) { return };
+
+			currentTab = scope._.currentTabId;
+			that = scope._.contents[currentTab].Content;
+			tabID = NS.iframeNumber + '_' + currentTab;
+			NS.div_overlay.setEnable();
+
+			if (that.getElement().getChildCount() == 0) {
+				NS.setIframe(that, currentTab);
+				iframe = document.getElementById(tabID);
+				NS.targetFromFrame[tabID] = iframe.contentWindow;
+			} else {
+				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
+			};
+		});
 	};
 
 	NS.buildSelectLang = function() {
@@ -311,10 +324,10 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		divContainer.setAttribute("role", "presentation");
 		divContainer.setStyles({
 			'height': 'auto',
-		    'position': 'absolute',
-		    'right': '0',
-		    'top': '-1px',
-		    'width': '160px',
+			'position': 'absolute',
+			'right': '0',
+			'top': '-1px',
+			'width': '160px',
 			'white-space': 'normal'
 		});
 
@@ -361,14 +374,24 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		};
 	};
 
-	// banner add
+	NS.buildOptionSynonyms = function(key) {
+		var syn = NS.selectNodeResponce[key];
+		NS.selectNode['synonyms'].clear();
+
+		for (var item = 0; item < syn.length; item++) {
+			NS.selectNode['synonyms'].add(syn[item], syn[item]);
+		};
+
+		NS.selectNode['synonyms'].getInputElement().$.firstChild.selected = true;
+		NS.textNode['Thesaurus'].setValue(NS.selectNode['synonyms'].getInputElement().getValue())
+	};
+
 	var setBannerInPlace = function(htmlBanner) {
 		var findBannerPlace = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'banner').getElement();
 		findBannerPlace.setHtml(htmlBanner);
+
 	};
 
-
-	// Create overlay block on iframe when run button "options"
 	var overlayBlock = function overlayBlock(opt) {
 		var progress = opt.progress || "",
 			doc = document,
@@ -394,8 +417,8 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		thisOverlay.id = overlayId;
 
 		if (!getOverlay) {
-			target.appendChild(thisOverlay);
-		}
+		target.appendChild(thisOverlay);
+		};
 
 		return {
 			setDisable: function() {
@@ -407,13 +430,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		}
 	};
 
-
 	var buildRadioInputs = function(key, value, check) {
 		var divContainer = new CKEDITOR.dom.element('div'),
 			radioButton = new CKEDITOR.dom.element('input'),
 			radioLabel = new CKEDITOR.dom.element('label'),
 			id = "wscGrammerSuggest" + key + "_" + value;
-
 
 		divContainer.addClass("cke_dialog_ui_input_radio");
 		divContainer.setAttribute("role", "presentation");
@@ -456,62 +477,59 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		return divContainer;
 	};
 
-var langConstructor = function(lang) {
-	var langSelectBox = new __constructLangSelectbox(lang),
-		selectId = "wscLang" + NS.CKNumber,
-		selectContainer = document.getElementById(selectId),
-		currentTabId = NS.dialog._.currentTabId,
-		frameId = NS.iframeNumber + '_' + currentTabId;
+	var langConstructor = function(lang) {
+		var langSelectBox = new __constructLangSelectbox(lang),
+			selectId = "wscLang" + NS.CKNumber,
+			selectContainer = document.getElementById(selectId),
+			currentTabId = NS.dialog._.currentTabId,
+			frameId = NS.iframeNumber + '_' + currentTabId;
 
-	NS.buildOptionLang(langSelectBox.setLangList);
+		NS.buildOptionLang(langSelectBox.setLangList);
 
-	tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
+		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
 
-	selectContainer.onchange = function(e){
-		e = e || window.event;
-		tabView[langSelectBox.getCurrentLangGroup(this.value)]();
-		NS.div_overlay.setEnable();
+		selectContainer.onchange = function(e){
+			e = e || window.event;
+			tabView[langSelectBox.getCurrentLangGroup(this.value)]();
+			NS.div_overlay.setEnable();
 
-		NS.selectingLang = this.value;
+			NS.selectingLang = this.value;
 
-		manageMessage.send({
-		 	'message': {
-		 		'changeLang': NS.selectingLang,
-		 		'text': NS.dataTemp
-		 	},
-			'target': NS.targetFromFrame[frameId],
-			'id': 'selectionLang_outer__page'
-		});
-		//NS.div_overlay.setDisable();
-	};
-
-};
-
-var disableButtonSuggest = function(word) {
-	if (word == 'no_any_suggestions') {
-		word = 'No suggestions';
-		NS.LocalizationButton['ChangeTo'].instance.disable();
-		NS.LocalizationButton['ChangeAll'].instance.disable();
-
-		// hack for css disable button ckeditor 4
-		function styleDisable(/* string */instanceButton) {
-			var button = NS.LocalizationButton[instanceButton].instance;
-			button.getElement().hasClass('cke_disabled') ? button.getElement().setStyle('color', '#a0a0a0') : button.disable();
+			appTools.postMessage.send({
+			 	'message': {
+			 		'changeLang': NS.selectingLang,
+			 		'text': NS.dataTemp
+			 	},
+				'target': NS.targetFromFrame[frameId],
+				'id': 'selectionLang_outer__page'
+			});
 		};
 
-		styleDisable('ChangeTo');
-		styleDisable('ChangeAll');
-
-		return word;
-	} else {
-		NS.LocalizationButton['ChangeTo'].instance.enable();
-		NS.LocalizationButton['ChangeAll'].instance.enable();
-		NS.LocalizationButton['ChangeTo'].instance.getElement().setStyle('color', '#333');
-		NS.LocalizationButton['ChangeAll'].instance.getElement().setStyle('color', '#333');
-		return word;
 	};
 
-};
+	var disableButtonSuggest = function(word) {
+		if (word == 'no_any_suggestions') {
+			word = 'No suggestions';
+			NS.LocalizationButton['ChangeTo'].instance.disable();
+			NS.LocalizationButton['ChangeAll'].instance.disable();
+
+			function styleDisable(instanceButton) {
+				var button = NS.LocalizationButton[instanceButton].instance;
+				button.getElement().hasClass('cke_disabled') ? button.getElement().setStyle('color', '#a0a0a0') : button.disable();
+			};
+
+			styleDisable('ChangeTo');
+			styleDisable('ChangeAll');
+
+			return word;
+		} else {
+			NS.LocalizationButton['ChangeTo'].instance.enable();
+			NS.LocalizationButton['ChangeAll'].instance.enable();
+			NS.LocalizationButton['ChangeTo'].instance.getElement().setStyle('color', '#333');
+			NS.LocalizationButton['ChangeAll'].instance.getElement().setStyle('color', '#333');
+			return word;
+		};
+	};
 
 	var handlerId = {
 		iframeOnload: function(response) {
@@ -519,8 +537,6 @@ var disableButtonSuggest = function(word) {
 			iframeOnload = true;
 			var currentTab = NS.dialog._.currentTabId,
 				tabId = NS.iframeNumber + '_' + currentTab;
-			//debugger
-
 			sendData(NS.targetFromFrame[tabId], NS.cmd[currentTab]);
 		},
 
@@ -530,25 +546,20 @@ var disableButtonSuggest = function(word) {
 			hideCurrentFinishChecking();
 			langConstructor(NS.langList);
 
+			if (NS.show_grammar == 'false') {
+				hideGrammTab();
+			};
 
 			var word =  disableButtonSuggest(response.word),
 				suggestionsList = '';
 
 			if (word instanceof Array) {
-			    word = response.word[0];
+				word = response.word[0];
 
 			};
+
 			word = word.split(',');
-
-
-			//NS.langSelectbox = new __constructLangSelectbox(NS.langList);
-
-			//tabView[NS.langSelectbox.getCurrentLangGroup(NS.selectingLang)]();
-
-			//NS.buildOptionLang(NS.langSelectbox.setLangList);
-
 			suggestionsList = word;
-
 			selectNode.clear();
 			NS.textNode['SpellTab'].setValue(suggestionsList[0]);
 
@@ -557,21 +568,18 @@ var disableButtonSuggest = function(word) {
 			};
 
 			showCurrentTabs();
-			//NS.div_overlay.setEnable();
 			NS.div_overlay.setDisable();
 
 		},
 
 		grammerSuggest: function(response) {
 			delete response.id;
-//			NS.langList = response.mocklangs;
-
-//			langConstructor(NS.langList);
 			delete response.mocklangs;
 
 			hideCurrentFinishChecking();
 			var firstSuggestValue = response.grammSuggest[0];// ? firstSuggestValue = response.grammSuggest[0] : firstSuggestValue = 'No suggestion for this words';
 			NS.grammerSuggest.getElement().setHtml('');
+
 			NS.textNode['GrammTab'].reset();
 			NS.textNode['GrammTab'].setValue(firstSuggestValue);
 
@@ -582,7 +590,7 @@ var disableButtonSuggest = function(word) {
 				len = arr.length,
 				check = true;
 
-			    for (var i = 0; i < len; i++) {
+				for (var i = 0; i < len; i++) {
 					NS.grammerSuggest.getElement().append(buildRadioInputs(arr[i], arr[i], check));
 					check = false;
 				};
@@ -593,8 +601,6 @@ var disableButtonSuggest = function(word) {
 
 		thesaurusSuggest: function(response) {
 			delete response.id;
-//			NS.langList = response.mocklangs;
-//			langConstructor(NS.langList);
 			delete response.mocklangs;
 
 			hideCurrentFinishChecking();
@@ -609,9 +615,7 @@ var disableButtonSuggest = function(word) {
 			};
 
 			var synKey = NS.selectNode['categories'].getInputElement().getChildren().$[0].value;
-
 			NS.selectNode['categories'].getInputElement().getChildren().$[0].selected = true;
-
 			NS.buildOptionSynonyms(synKey);
 
 			showCurrentTabs();
@@ -626,10 +630,12 @@ var disableButtonSuggest = function(word) {
 		},
 		settext: function(response) {
 			delete response.id;
-
+	
+			//CKEDITOR.currentInstance.focus()
+			//CKEDITOR.currentInstance.setData(response.text, NS.dataTemp = '');
 			NS.dialog.getParentEditor().focus();
-			NS.dialog.getParentEditor().setData(response.text, NS.dialog.hide());
-			//NS.dataTemp = NS.dialog.getParentEditor().getData();
+			NS.dialog.getParentEditor().setData(response.text, NS.dataTemp = '');
+			NS.dialog.hide();
 
 		},
 		ReplaceText: function(response) {
@@ -647,22 +653,19 @@ var disableButtonSuggest = function(word) {
 			SetLocalizationLabel(NS.LocalizationLabel);
 
 		},
-
 		options_checkbox_send: function(response) {
 			delete response.id;
 
 			var obj = {
-				'osp': tools.getCookie('osp'),
-				'udn': tools.getCookie('udn'),
-				//'ud': tools.getCookie('ud'),
+				'osp': appTools.cookie.get('osp'),
+				'udn': appTools.cookie.get('udn'),
 				'cust_dic_ids': NS.cust_dic_ids
-				//'udnCmd': tools.getCookie('udnCmd')
 			}
 
 			var currentTabId = NS.dialog._.currentTabId,
 				frameId = NS.iframeNumber + '_' + currentTabId;
 
-			manageMessage.send({
+			appTools.postMessage.send({
 				'message': obj,
 				'target': NS.targetFromFrame[frameId],
 				'id': 'options_outer__page'
@@ -672,25 +675,33 @@ var disableButtonSuggest = function(word) {
 		getOptions: function(response) {
 			var udn = response.DefOptions.udn;
 			NS.LocalizationComing = response.DefOptions.localizationButtonsAndText;
-
+			NS.show_grammar = response.show_grammar;
 			NS.langList = response.lang;
+			NS.bnr = response.bannerId;
+			if (response.bannerId) {
+				NS.setHeightBannerFrame();
+				setBannerInPlace(response.banner);
+			} else {
+				NS.setHeightFrame();
+			};
 
-			setBannerInPlace(response.banner);
+			if (NS.show_grammar == 'false') {
+				hideGrammTab();
+			};
 
 			if (udn == 'undefined') {
 				if (NS.userDictionaryName) {
 					udn = NS.userDictionaryName;
 
 					var obj = {
-						'osp': tools.getCookie('osp'),
+						'osp': appTools.cookie.get('osp'),
 						'udn': NS.userDictionaryName,
-						//'ud': tools.getCookie('ud'),
 						'cust_dic_ids': NS.cust_dic_ids,
 						'id': 'options_dic_send',
 						'udnCmd': 'create'
 					};
 
-					manageMessage.send({
+					appTools.postMessage.send({
 						'message': obj,
 						'target': NS.targetFromFrame[frameId]
 					});
@@ -700,38 +711,35 @@ var disableButtonSuggest = function(word) {
 				};
 			};
 
-			tools.setCookie('osp', response.DefOptions.osp);
-			tools.setCookie('udn', udn);
-			//tools.setCookie('ud', response.ud);
-			tools.setCookie('cust_dic_ids', response.DefOptions.cust_dic_ids);
+			appTools.cookie.set('osp', response.DefOptions.osp);
+			appTools.cookie.set('udn', udn);
+			appTools.cookie.set('cust_dic_ids', response.DefOptions.cust_dic_ids);
 
-			manageMessage.send({
+			appTools.postMessage.send({
 				'id': 'giveOptions'
 			});
 		},
 
 		options_dic_send: function(response) {
-			//delete response.id;
 
 			var obj = {
-				'osp': tools.getCookie('osp'),
-				'udn': tools.getCookie('udn'),
-				//'ud': tools.getCookie('ud'),
+				'osp': appTools.cookie.get('osp'),
+				'udn': appTools.cookie.get('udn'),
 				'cust_dic_ids': NS.cust_dic_ids,
 				'id': 'options_dic_send',
-				'udnCmd': tools.getCookie('udnCmd')
+				'udnCmd': appTools.cookie.get('udnCmd')
 			};
 
 			var currentTabId = NS.dialog._.currentTabId,
 				frameId = NS.iframeNumber + '_' + currentTabId;
 
-			manageMessage.send({
+			appTools.postMessage.send({
 				'message': obj,
 				'target': NS.targetFromFrame[frameId]
 			});
 		},
 		data: function(response) {
-			delete response.id; // fix from ie9
+			delete response.id;
 		},
 
 		giveOptions: function() {
@@ -774,7 +782,7 @@ var disableButtonSuggest = function(word) {
 		var currentTabId = NS.dialog._.currentTabId,
 			frameId = NS.iframeNumber + '_' + currentTabId;
 
-		manageMessage.send({
+		appTools.postMessage.send({
 			'message': {
 				'cmd': 'Options'
 			},
@@ -784,31 +792,12 @@ var disableButtonSuggest = function(word) {
 
 	};
 
-	var handlerButtons = function(event) {
-		event = event || window.event;
-		NS.div_overlay.setEnable();
-		var currentTabId = NS.dialog._.currentTabId,
-			frameId = NS.iframeNumber + '_' + currentTabId,
-			new_word = NS.textNode[currentTabId].getValue();
-
-		manageMessage.send({
-			'message': {
-				'cmd': this.getElement().getAttribute("title-cmd"),
-				'tabId': currentTabId,
-				'new_word': new_word
-			},
-			'target': NS.targetFromFrame[frameId],
-			'id': 'cmd_outer__page'
-		});
-
-	};
-
 	var sendData = function(frameTarget, cmd, sendText, reset_suggest) {
 		cmd = cmd || CKEDITOR.config.wsc_cmd || 'spell';
 		reset_suggest = reset_suggest || false;
 		sendText = sendText || NS.dataTemp;
 
-		manageMessage.send({
+		appTools.postMessage.send({
 			'message': {
 				'customerId': NS.wsc_customerId,
 				'text': sendText,
@@ -822,27 +811,24 @@ var disableButtonSuggest = function(word) {
 			'target': frameTarget,
 			'id': 'data_outer__page'
 		});
-NS.div_overlay.setEnable();
+
+		NS.div_overlay.setEnable();
 	};
 
 	var tabView = {
-	    "superset" : function() {
-	    	showThesaurusTab();
-	    	showGrammTab();
-	    	showSpellTab();
-	    },
-	    "usual"    : function() {
-	    	hideThesaurusTab();
-	    	hideGrammTab();
-	    	showSpellTab();
-	    }
+		"superset" : function() {
+			showThesaurusTab();
+			showGrammTab();
+			showSpellTab();
+		},
+		"usual"    : function() {
+			hideThesaurusTab();
+			hideGrammTab();
+			showSpellTab();
+		}
 	};
 
-	var showFirstTab = function() {
-
-
-
-
+	var showFirstTab = function(scope) {
 		var cmdManger = function(cmdView) {
 			var obj = {};
 			var _getCmd = function(cmd) {
@@ -857,10 +843,8 @@ NS.div_overlay.setEnable();
 		};
 
 		var cmdM = new cmdManger(NS.cmd);
-		NS.dialog.selectPage(cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd));
-		NS.sendData();
-//		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]()
-		//NS.dialog._.currentTabId.click();
+		scope.selectPage(cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd));
+		NS.sendData(scope);
 	};
 
 	var showThesaurusTab = function() {
@@ -888,606 +872,399 @@ NS.div_overlay.setEnable();
 	};
 
 	var showCurrentTabs = function() {
-		/*if (NS.dialog._.currentTabId == 'Thesaurus') {
-			return;
-		};*/
-
 		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().show();
 	};
 
 	var hideCurrentTabs = function() {
-		/*if (NS.dialog._.currentTabId == 'Thesaurus') {
-			return;
-		};*/
-
 		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().hide();
 	};
 
 	var showCurrentFinishChecking = function() {
-		/*if (NS.dialog._.currentTabId == 'Thesaurus') {
-			return;
-		};*/
-
 		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().show();
 	};
 
 	var hideCurrentFinishChecking = function() {
-		/*if (NS.dialog._.currentTabId == 'Thesaurus') {
-			return;
-		};*/
-
 		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().hide();
 	};
 
 
 
 function __constructLangSelectbox(languageGroup) {
+	if ( !languageGroup ) throw "Languages-by-groups list are required for construct selectbox";
 
-    if ( !languageGroup ) throw "Languages-by-groups list are required for construct selectbox";
+	var that = this,
+		o_arr = [],
+		priorLang ="en_US",
+		priorLangTitle = "",
+		currLang = NS.selectingLang;
 
-    var that = this,
-        o_arr = [],
-        priorLang ="en_US",
-        priorLangTitle = "",
-        currLang = NS.selectingLang;
+	for ( var group in languageGroup){
+		for ( var langCode in languageGroup[group]){
+			var langName = languageGroup[group][langCode];
+			if ( langName == priorLang )
+				priorLangTitle = langName;
+			else
+				o_arr.push( langName );
+		}
+	}
 
-
-     for ( var group in languageGroup){
-        for ( var langCode in languageGroup[group]){
-            var langName = languageGroup[group][langCode];
-            if ( langName == priorLang )
-                priorLangTitle = langName;
-            else
-                o_arr.push( langName );
-        }
-
-    }
-
-    o_arr.sort();
-    if(priorLangTitle) {
+	o_arr.sort();
+	if(priorLangTitle) {
 		o_arr.unshift( priorLangTitle );
-    };
+	};
 
-    var searchGroup = function ( code ){
-        for ( var group in languageGroup){
-            for ( var langCode in languageGroup[group]){
-                if ( langCode.toUpperCase() === code.toUpperCase() )
-                    return group;
-            };
+	var searchGroup = function ( code ){
+		for ( var group in languageGroup){
+			for ( var langCode in languageGroup[group]){
+				if ( langCode.toUpperCase() === code.toUpperCase() )
+					return group;
+			};
+		};
+		return "";
+	};
 
-        };
-        return "";
-    };
+	var _setLangList = function() {
+		var langList = {},
+			langArray = [];
+		for (var group in languageGroup) {
+			for ( var langCode in languageGroup[group]){
+				langList[languageGroup[group][langCode]] = langCode;
+			};
+		};
+		return langList;
+	};
 
-    var _setLangList = function() {
-    	var langList = {},
-    		langArray = [];
-    	for (var group in languageGroup) {
-    		for ( var langCode in languageGroup[group]){
-               langList[languageGroup[group][langCode]] = langCode;
-            };
-    	};
-    	return langList;
-    };
-
-
-    var _return = {
+	var _return = {
 		getCurrentLangGroup: function(code) {
 			return searchGroup(code);
 		},
 		setLangList: _setLangList()
-    };
+	};
 
-
-    return _return;
-
+	return _return;
 };
 
-	return {
+NS.CKNumber = CKEDITOR.tools.getNextNumber();
+CKEDITOR.dialog.add('checkspell', function(editor) {
+	var handlerButtons = function(event) {
+		event = event || window.event;
+
+		NS.div_overlay.setEnable();
+		var currentTabId = NS.dialog._.currentTabId,
+			frameId = NS.iframeNumber + '_' + currentTabId,
+			new_word = NS.textNode[currentTabId].getValue();
+
+		appTools.postMessage.send({
+			'message': {
+				'cmd': this.getElement().getAttribute("title-cmd"),
+				'tabId': currentTabId,
+				'new_word': new_word
+			},
+			'target': NS.targetFromFrame[frameId],
+			'id': 'cmd_outer__page'
+		});
+
+		if (this.getElement().getAttribute("title-cmd") == 'FinishChecking') {
+			editor.config.wsc_onFinish.call(CKEDITOR.document.getWindow().getFrame());
+		};
+
+	};
+	var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
+	var wscCoreUrl = CKEDITOR.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + CKEDITOR.config.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
+	
+	var oneLoadFunction = null;	
+
+ return {
 		title: editor.config.wsc_dialogTitle || editor.lang.wsc.title,
 		minWidth: 560,
-		minHeight: 350,
-		resizable: CKEDITOR.DIALOG_RESIZE_NONE,
+		minHeight: 444,
 		buttons: [CKEDITOR.dialog.cancelButton],
-		onLoad: function() {
-			manageMessage = new ManagerPostMessage();
-			NS.dialog = this;
-			showFirstTab();
-			NS.dataTemp = NS.dialog.getParentEditor().getData();
-			manageMessage.init(handlerIncomingData);
-
-			NS.div_overlay = new overlayBlock({
-				opacity: "0.95",
-				background: "#fff url(" + NS.loadIcon + ") no-repeat 50% 50%",
-				target: this.parts.tabs.getParent().$
-			});
-
-			NS.div_overlay_no_check = new overlayBlock({
-				opacity: "1",
-				id: 'no_check_over',
-				background: "#fff url(" + NS.loadIconEmptyEditor + ") no-repeat 50% 50%",
-				target: this.parts.tabs.getParent().$
-			});
-			//NS.div_overlay.setDisable();
-
-			//NS.sendData();
-			var number_ck = NS.CKNumber + 1,
-				id_tab = CKEDITOR.document.getById('cke_dialog_tabs_' + number_ck);
-
-			id_tab.setStyle('width', '97%');
-			id_tab.append(NS.buildSelectLang());
-
-		},
 		onShow: function() {
-			NS.div_overlay.setDisable();
-			/*var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
-			NS.dataTemp = NS.dialog.getParentEditor().getData();*/
-			showFirstTab();
-			//sendData(NS.targetFromFrame[tabId], null, null, true);
-			if ( NS.dialog.getParentEditor().getData() == '' ) {
-				NS.div_overlay_no_check.setEnable();
-				//alert( 'Nothing to check' );
-				//NS.dialog.getParentEditor().focus();
-				//NS.dialog.hide()
-			};
+			NS.dialog = this;
+			NS.TextAreaNumber = 'cke_textarea_' + CKEDITOR.currentInstance.name;
+			appTools.postMessage.init(handlerIncomingData);
+			NS.dataTemp = CKEDITOR.currentInstance.getData();
+			//NS.div_overlay.setDisable();
+			NS.OverlayPlace = NS.dialog.parts.tabs.getParent().$;
+			CKEDITOR.scriptLoader.load(wscCoreUrl, function(success) {
+				NS.pluginPath = CKEDITOR.getUrl(editor.plugins.wsc.path);
+				
+				NS.iframeNumber = NS.TextAreaNumber//'cke_frame_' + NS.CKNumber;
+				NS.serverLocationHash = DefaultParams.serviceHost;
+				NS.serverLocation = '#server=' + NS.serverLocationHash;
+				NS.logotype = DefaultParams.logoPath;
+				NS.templatePath = NS.pluginPath + 'dialogs/tmp.html';
+				NS.loadIcon = DefaultParams.iconPath;
+				NS.loadIconEmptyEditor = DefaultParams.iconPathEmptyEditor;
+				NS.LangComparer = new _SP_FCK_LangCompare();
+				NS.LangComparer.setDefaulLangCode( NS.defaultLanguage );
+				NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode );
+
+				NS.div_overlay = new overlayBlock({
+					opacity: "1",
+					background: "#fff url(" + NS.loadIcon + ") no-repeat 50% 50%",
+					target: NS.OverlayPlace
+
+				});
+			
+				var number_ck = NS.CKNumber + 1,
+					id_tab = CKEDITOR.document.getById('cke_dialog_tabs_' + number_ck);
+				id_tab.setStyle('width', '97%');
+				if (id_tab.getElementsByTag('DIV').count() == 0){
+					id_tab.append(NS.buildSelectLang());
+				}
+
+				NS.div_overlay_no_check = new overlayBlock({
+					opacity: "1",
+					id: 'no_check_over',
+					background: "#fff url(" + NS.loadIconEmptyEditor + ") no-repeat 50% 50%",
+					target: NS.OverlayPlace
+				});
+
+
+
+				if (success) {
+					showFirstTab(NS.dialog);
+					NS.dialog.setupContent(NS.dialog);
+				};
+			});
+
 		},
 		onHide: function() {
-			//var firstTabId = NS.iframeNumber + '_SpellTab';
-			//sendData(NS.targetFromFrame[firstTabId], null, NS.dataTemp, true);
-			/*manageMessage.send({
-			 	'message': { 'changeLang': NS.selectingLang},
-				'target': NS.targetFromFrame[firstTabId],
-				'id': 'selectionLang_outer__page'
-			});*/
-			NS.dataTemp = null;
+			NS.dataTemp = '';
 		},
 		contents: [
 			{
-			id: 'SpellTab',
-			label: 'SpellChecker',
-			accessKey: 'S',
-			elements: [
-			{
-				type: 'html',
-				id: 'banner',
-				label: 'banner',
-				style: '', //TODO
-				html: '<div></div>'
-			},
-			{
-				type: 'html',
-				id: 'Content',
-				label: 'spellContent',
-				html: '',
-				onLoad: function() {
-					//NS.setCurrentIframe(NS.dialog._.currentTabId);
-					var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
-					var iframe = document.getElementById(tabId);
-					NS.targetFromFrame[tabId] = iframe.contentWindow;
-
-				},
-				onShow: function() {
-					NS.dataTemp = NS.dialog.getParentEditor().getData();
-					var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
-					//sendData(NS.targetFromFrame[tabId], null, NS.dataTemp);
-					NS.div_overlay.setEnable();
-				}
-			},
-                    {
-				type: 'hbox',
-				id: 'bottomGroup',
-				widths: ['50%', '50%'],
-				children: [
-                            {
-					type: 'hbox',
-					id: 'leftCol',
-					align: 'left',
-					width: '50%',
-					children: [
-                                    {
-						type: 'vbox',
-						id: 'rightCol1',
+				id: 'SpellTab',
+				label: 'SpellChecker',
+				accessKey: 'S',
+				elements: [
+					{
+						type: 'html',
+						id: 'banner',
+						label: 'banner',
+						style: '', //TODO
+						html: '<div></div>'
+					},
+					{
+						type: 'html',
+						id: 'Content',
+						label: 'spellContent',
+						html: '',
+						setup: function(dialog) {// debugger;	
+							var tabId = NS.iframeNumber + '_' + dialog._.currentTabId;
+							var iframe = document.getElementById(tabId);
+							NS.targetFromFrame[tabId] = iframe.contentWindow; 
+						}
+					},
+					{
+						type: 'hbox',
+						id: 'bottomGroup',
+						style: 'width:560px; margin: 0 auto;',
 						widths: ['50%', '50%'],
 						children: [
-                                            {
-							type: 'text',
-							id: 'text',
-							label: NS.LocalizationLabel['ChangeTo'].text + ':',
-							labelLayout: 'horizontal',
-							labelStyle: 'font: 12px/25px arial, sans-serif;',
-							width: '140px',
-							'default': '',
-							onLoad: function() {
-								NS.textNode['SpellTab'] = this;
-								NS.LocalizationLabel['ChangeTo'].instance = this;
-							},
-							onHide: function() {
-								this.reset();
-							}
-						},
-                                            {
-							type: 'hbox',
-							id: 'rightCol',
-							align: 'right',
-							width: '30%',
-							children: [
-                                                    {
-								type: 'vbox',
-								id: 'rightCol_col__left',
+							{
+								type: 'hbox',
+								id: 'leftCol',
+								align: 'left',
+								width: '50%',
 								children: [
-                                                            {
-									type: 'text',
-									id: 'labelSuggestions',
-									label: NS.LocalizationLabel['Suggestions'].text + ':',
-									onLoad: function() {
-										NS.LocalizationLabel['Suggestions'].instance = this;
-										this.getInputElement().hide();
+									{
+										type: 'vbox',
+										id: 'rightCol1',
+										widths: ['50%', '50%'],
+										children: [
+											{
+												type: 'text',
+												id: 'text',
+												label: NS.LocalizationLabel['ChangeTo'].text + ':',
+												labelLayout: 'horizontal',
+												labelStyle: 'font: 12px/25px arial, sans-serif;',
+												width: '140px',
+												'default': '',
+												onShow: function() {
+													NS.textNode['SpellTab'] = this;
+													NS.LocalizationLabel['ChangeTo'].instance = this;
+												},
+												onHide: function() {
+													this.reset();
+												}
+											},
+											{
+												type: 'hbox',
+												id: 'rightCol',
+												align: 'right',
+												width: '30%',
+												children: [
+													{
+														type: 'vbox',
+														id: 'rightCol_col__left',
+														children: [
+															{
+																type: 'text',
+																id: 'labelSuggestions',
+																label: NS.LocalizationLabel['Suggestions'].text + ':',
+																onShow: function() {
+																	NS.LocalizationLabel['Suggestions'].instance = this;
+																	this.getInputElement().hide();
+																}
+															},
+						 									{
+																type: 'html',
+																id: 'logo',
+																html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+																setup: function(dialog) {
+																	this.getElement().$.src = NS.logotype;
+																	this.getElement().getParent().setStyles({
+																		"text-align": "left"
+																	})
+																}
+															}
+														]
+													},
+													{
+														type: 'select',
+														id: 'list_of_suggestions',
+														labelStyle: 'font: 12px/25px arial, sans-serif;',
+														size: '6',
+														inputStyle: 'width: 140px; height: auto;',
+														items: [['loading...']],
+														onShow: function() {
+															selectNode = this;
+														},
+														onHide: function() {
+															this.clear();
+														},
+														onChange: function() {
+															NS.textNode['SpellTab'].setValue(this.getValue());
+														}
+													}
+												]
+											}
+										]
 									}
-								},
-                                                            {
-									type: 'html',
-									id: 'logo',
-									html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
-									onShow: function() {
-										this.getElement().$.src = NS.logotype;
-										this.getElement().getParent().setStyles({
-											"text-align": "left"
-										})
+								]
+							},
+							{
+								type: 'hbox',
+								id: 'rightCol',
+								align: 'right',
+								width: '50%',
+								children: [
+									{
+										type: 'vbox',
+										id: 'rightCol_col__left',
+										widths: ['50%', '50%', '50%', '50%'],
+										children: [
+											{
+												type: 'button',
+												id: 'ChangeTo',
+												label: NS.LocalizationButton['ChangeTo'].text,
+												title: 'Change to',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['ChangeTo'].instance = this;
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'ChangeAll',
+												label: NS.LocalizationButton['ChangeAll'].text,
+												title: 'Change All',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['ChangeAll'].instance = this;
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'AddWord',
+												label: NS.LocalizationButton['AddWord'].text,
+												title: 'Add word',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['AddWord'].instance = this;
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'FinishChecking',
+												label: NS.LocalizationButton['FinishChecking'].text,
+												title: 'Finish Checking',
+												style: 'width: 100%;margin-top: 9px;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['FinishChecking'].instance = this;
+												},
+												onClick: handlerButtons
+											}
+										]
+									},
+									{
+										type: 'vbox',
+										id: 'rightCol_col__right',
+										widths: ['50%', '50%', '50%'],
+										children: [
+											{
+												type: 'button',
+												id: 'IgnoreWord',
+												label: NS.LocalizationButton['IgnoreWord'].text,
+												title: 'Ignore word',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['IgnoreWord'].instance = this;
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'IgnoreAllWords',
+												label: NS.LocalizationButton['IgnoreAllWords'].text,
+												title: 'Ignore all words',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+													NS.LocalizationButton['IgnoreAllWords'].instance = this;
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'option',
+												label: NS.LocalizationButton['Options'].text,
+												title: 'Option',
+												style: 'width: 100%;',
+												onLoad: function() {
+													NS.LocalizationButton['Options'].instance = this;
+													if (document.location.protocol == "file:") {
+														this.disable();
+													}
+												},
+												onClick: function() {
+													if (document.location.protocol == "file:") {
+														alert('WSC: Options functionality is disabled when runing from file system');
+													} else {
+														editor.openDialog('options');
+													};
+												}
+											}
+										]
 									}
-								}
-                                                        ]
-							},
-                                                    {
-								type: 'select',
-								id: 'list_of_suggestions',
-								labelStyle: 'font: 12px/25px arial, sans-serif;',
-								size: '6',
-								inputStyle: 'width: 140px; height: auto;',
-								items: [['loading...']],
-								onShow: function() {
-									selectNode = this;
-								},
-								onHide: function() {
-									this.clear();
-								},
-								onChange: function() {
-									NS.textNode['SpellTab'].setValue(this.getValue());
-								}
+								]
 							}
-                                                ]
-						}
-                                        ]
-					}
-                                ]
-				},
-                            {
-					type: 'hbox',
-					id: 'rightCol',
-					align: 'right',
-					width: '50%',
-					children: [
-                                    {
-						type: 'vbox',
-						id: 'rightCol_col__left',
-						widths: ['50%', '50%', '50%', '50%'],
-						children: [
-                                            {
-							type: 'button',
-							id: 'ChangeTo',
-							label: NS.LocalizationButton['ChangeTo'].text,
-							title: 'Change to',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['ChangeTo'].instance = this;
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'ChangeAll',
-							label: NS.LocalizationButton['ChangeAll'].text,
-							title: 'Change All',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['ChangeAll'].instance = this;
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'AddWord',
-							label: NS.LocalizationButton['AddWord'].text,
-							title: 'Add word',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['AddWord'].instance = this;
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'FinishChecking',
-							label: NS.LocalizationButton['FinishChecking'].text,
-							title: 'Finish Checking',
-							style: 'width: 100%;margin-top: 9px;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['FinishChecking'].instance = this;
-							},
-							onClick: handlerButtons
-						}
-                                        ]
-					},
-                                    {
-						type: 'vbox',
-						id: 'rightCol_col__right',
-						widths: ['50%', '50%', '50%'],
-						children: [
-                                            {
-							type: 'button',
-							id: 'IgnoreWord',
-							label: NS.LocalizationButton['IgnoreWord'].text,
-							title: 'Ignore word',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['IgnoreWord'].instance = this;
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'IgnoreAllWords',
-							label: NS.LocalizationButton['IgnoreAllWords'].text,
-							title: 'Ignore all words',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								NS.LocalizationButton['IgnoreAllWords'].instance = this;
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'option',
-							label: NS.LocalizationButton['Options'].text,
-							title: 'Option',
-							style: 'width: 100%;',
-							onLoad: function() {
-								NS.LocalizationButton['Options'].instance = this;
-								if (document.location.protocol == "file:") {
-									this.disable();
-								}
-							},
-							onClick: function() {
-								if (document.location.protocol == "file:") {
-									alert('WSC: Options functionality is disabled when runing from file system');
-								} else {
-									editor.openDialog('options');
-								};
-							}
-						}
-                                        ]
-					}
-
-                                ]
-				}
-                        ]
+				]
 			},
-                    {
-				type: 'hbox',
-				id: 'BlockFinishChecking',
-				widths: ['70%', '30%'],
-				onShow: function() {
-					this.getElement().hide();
-				},
-				onHide: showCurrentTabs,
-				children: [
-
-                            {
-					type: 'hbox',
-					id: 'leftCol',
-					align: 'left',
-					width: '70%',
-					children: [
-                                    {
-						type: 'vbox',
-						id: 'rightCol1',
-						children: [
-                                            {
-							type: 'html',
-							id: 'logo',
-							html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
-							onShow: function() {
-								this.getElement().$.src = NS.logotype;
-								this.getElement().getParent().setStyles({
-									"text-align": "center"
-								})
-							}
-						}
-                                        ]
-					}
-                                ]
-				},
-                            {
-					type: 'hbox',
-					id: 'rightCol',
-					align: 'right',
-					width: '30%',
-					children: [
-                                    {
-						type: 'vbox',
-						id: 'rightCol_col__left',
-						children: [
-                                            {
-							type: 'button',
-							id: 'Option_button',
-							label: NS.LocalizationButton['Options'].text,
-							title: 'Option',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-								if (document.location.protocol == "file:") {
-									this.disable();
-								}
-							},
-							onClick: function() {
-								if (document.location.protocol == "file:") {
-									alert('WSC: Options functionality is disabled when runing from file system');
-								} else {
-									editor.openDialog('options');
-								};
-
-							}
-						},
-                                            {
-							type: 'button',
-							id: 'FinishChecking',
-							label: NS.LocalizationButton['FinishChecking'].text,
-							title: 'Finish Checking',
-							style: 'width: 100%;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						}
-                                        ]
-					}
-                                ]
-				}
-                        ]
-			}
-                ]
-		},
-            {
-			id: 'GrammTab',
-			label: 'Grammar',
-			accessKey: 'G',
-			elements: [
 			{
-				type: 'html',
-				id: 'banner',
-				label: 'banner',
-				style: '', //TODO
-				html: '<div></div>'
-			},
-                    {
-				type: 'html',
-				id: 'Content',
-				label: 'GrammarContent',
-				html: '',
-				onShow: function() {
-					var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
-					var iframe = document.getElementById(tabId);
-					NS.targetFromFrame[tabId] = iframe.contentWindow;
-				}
-			},
-                    {
-				type: 'vbox',
-				id: 'bottomGroup',
-				children: [
-                            {
-					type: 'hbox',
-					id: 'leftCol',
-					widths: ['66%', '34%'],
-					children: [
-                                    {
-						type: 'vbox',
-						children: [
-                                            {
-							type: 'text',
-							id: 'text',
-							label: "Change to:",
-							labelLayout: 'horizontal',
-							labelStyle: 'font: 12px/25px arial, sans-serif; float: right;margin-right: 80px;',
-							inputStyle: '',
-							width: '200px',
-							'default': '',
-							onLoad: function(e) {
-								NS.textNode['GrammTab'] = this;
-							},
-							onHide: function() {
-								this.reset();
-							}
-						},
-                                            {
-
-							type: 'html',
-							id: 'html_text',
-							html: "<div style='min-height: 17px; width: 330px; line-height: 17px; padding: 5px; text-align: left;background: #F1F1F1;color: #595959; white-space: normal!important;'></div>",
-							onLoad: function(e) {
-								NS.textNodeInfo['GrammTab'] = this;
-							}
-						},
-                                            {
-							type: 'html',
-							id: 'radio',
-							html: "",
-							onLoad: function() {
-								NS.grammerSuggest = this;
-							}
-						}
-                                        ]
-					},
-                                    {
-						type: 'vbox',
-						children: [
-                                            {
-							type: 'button',
-							id: 'ChangeTo',
-							label: 'Change to',
-							title: 'Change to',
-							style: 'width: 133px; float: right;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'IgnoreWord',
-							label: 'Ignore word',
-							title: 'Ignore word',
-							style: 'width: 133px; float: right;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'IgnoreAllWords',
-							label: 'Ignore Problem',
-							title: 'Ignore Problem',
-							style: 'width: 133px; float: right;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						},
-                                            {
-							type: 'button',
-							id: 'FinishChecking',
-							label: 'Finish Checking',
-							title: 'Finish Checking',
-							style: 'width: 133px; float: right; margin-top: 9px;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						}
-                                        ]
-					}
-                                ]
-				}
-                        ]
-			},
-            {
 				type: 'hbox',
 				id: 'BlockFinishChecking',
+				style: 'width:560px; margin: 0 auto;',
 				widths: ['70%', '30%'],
 				onShow: function() {
 					this.getElement().hide();
@@ -1503,36 +1280,56 @@ function __constructLangSelectbox(languageGroup) {
 							{
 								type: 'vbox',
 								id: 'rightCol1',
+								setup: function() {
+									this.getChild()[0].getElement().$.src = NS.logotype;
+									this.getChild()[0].getElement().getParent().setStyles({
+										"text-align": "center"
+									})
+								},
 								children: [
-			                        {
+									{
 										type: 'html',
 										id: 'logo',
-										html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
-										onShow: function() {
-											this.getElement().$.src = NS.logotype;
-											this.getElement().getParent().setStyles({
-												"text-align": "center"
-											})
-										}
+										html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">'
 									}
-		                    	]
+								]
 							}
-	                    ]
+						]
 					},
-                    {
+					{
 						type: 'hbox',
 						id: 'rightCol',
 						align: 'right',
 						width: '30%',
 						children: [
-		                    {
+							{
 								type: 'vbox',
 								id: 'rightCol_col__left',
 								children: [
-			                        {
+									{
+										type: 'button',
+										id: 'Option_button',
+										label: NS.LocalizationButton['Options'].text,
+										title: 'Option',
+										style: 'width: 100%;',
+										onLoad: function() {
+											this.getElement().setAttribute("title-cmd", this.id);
+											if (document.location.protocol == "file:") {
+												this.disable();
+											}
+										},
+										onClick: function() {
+											if (document.location.protocol == "file:") {
+												alert('WSC: Options functionality is disabled when runing from file system');
+											} else {
+												editor.openDialog('options');
+											};
+										}
+									},
+									{
 										type: 'button',
 										id: 'FinishChecking',
-										label: 'Finish Checking',
+										label: NS.LocalizationButton['FinishChecking'].text,
 										title: 'Finish Checking',
 										style: 'width: 100%;',
 										onLoad: function() {
@@ -1540,232 +1337,414 @@ function __constructLangSelectbox(languageGroup) {
 										},
 										onClick: handlerButtons
 									}
-		                    	]
+								]
 							}
-	                    ]
+						]
 					}
-                ]
+				]
 			}
-                ]
+		]
 		},
-            {
-			id: 'Thesaurus',
-			label: 'Thesaurus',
-			accessKey: 'T',
-			elements: [
-				{
-					type: 'html',
-					id: 'banner',
-					label: 'banner',
-					style: '', //TODO
-					html: '<div></div>'
-				},
-                    {
-				type: 'html',
-				id: 'Content',
-				label: 'spellContent',
-				html: '',
-				onShow: function() {
-					var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
-					var iframe = document.getElementById(tabId);
-					NS.targetFromFrame[tabId] = iframe.contentWindow;
-				}
-			},
 			{
-				type: 'vbox',
-				id: 'bottomGroup',
-				children: [
-                    {
-				type: 'hbox',
-				widths: ['75%', '25%'],
-				children: [
-                            {
-					type: 'vbox',
-					children: [
-                                    {
-						type: 'hbox',
-						widths: ['65%', '35%'],
-						children: [
-                                            {
-							type: 'text',
-							id: 'ChangeTo',
-							label: 'Change to:',
-							labelLayout: 'horizontal',
-							inputStyle: 'width: 160px;',
-							labelStyle: 'font: 12px/25px arial, sans-serif;',
-							'default': '',
-							onLoad: function(e) {
-								NS.textNode['Thesaurus'] = this;
-							},
-							onHide: function() {
-								this.reset();
-							}
-						},
-                                            {
-							type: 'button',
-							id: 'ChangeTo',
-							label: 'Change to',
-							title: 'Change to',
-							style: 'width: 121px; margin-top: 1px;',
-							onLoad: function() {
-								this.getElement().setAttribute("title-cmd", this.id);
-							},
-							onClick: handlerButtons
-						}
-                                        ]
-					},
-                                    {
-						type: 'hbox',
-						children: [
-                                            {
-							type: 'select',
-							id: 'categories',
-							label: "Categories:",
-							labelStyle: 'font: 12px/25px arial, sans-serif;',
-							size: '6',
-							inputStyle: 'width: 180px; height: auto;',
-							items: [],
-							onLoad: function(e) {
-								NS.selectNode['categories'] = this;
-
-							},
-							onHide: function() {
-								this.clear();
-							},
-							onChange: function() {
-								NS.buildOptionSynonyms(this.getValue())
-							}
-						},
-                                            {
-							type: 'select',
-							id: 'synonyms',
-							label: "Synonyms:",
-							labelStyle: 'font: 12px/25px arial, sans-serif;',
-							size: '6',
-							inputStyle: 'width: 180px; height: auto;',
-							items: [],
-							onLoad: function(e) {
-								NS.selectNode['synonyms'] = this;
-							},
-							onShow: function() {
-								NS.textNode['Thesaurus'].setValue(this.getValue());
-							},
-							onHide: function() {
-								this.clear();
-							},
-							onChange: function(e) {
-								NS.textNode['Thesaurus'].setValue(this.getValue());
-							}
-						}
-                                        ]
-					}
-                                ]
-				},
-                            {
-					type: 'vbox',
-					width: '120px',
-					style: "margin-top:46px;",
-					children: [
-                                    {
+				id: 'GrammTab',
+				label: 'Grammar',
+				accessKey: 'G',
+				elements: [
+					{
 						type: 'html',
-						id: 'logotype',
-						label: 'WebSpellChecker.net',
-						html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
-						onShow: function() {
-							this.getElement().$.src = NS.logotype;
-							this.getElement().getParent().setStyles({
-								"text-align": "center"
-							})
+						id: 'banner',
+						label: 'banner',
+						style: '', //TODO
+						html: '<div></div>'
+					},
+					{
+						type: 'html',
+						id: 'Content',
+						label: 'GrammarContent',
+						html: '',
+						setup: function() {
+							var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
+							var iframe = document.getElementById(tabId);
+							NS.targetFromFrame[tabId] = iframe.contentWindow;
 						}
 					},
-                                    {
-						type: 'button',
-						id: 'FinishChecking',
-						label: 'Finish Checking',
-						title: 'Finish Checking',
-						style: 'width: 121px; float: right; margin-top: 9px;',
-						onLoad: function() {
-							this.getElement().setAttribute("title-cmd", this.id);
-						},
-						onClick: handlerButtons
-					}
-                                ]
-				}
-                        ]
-			}
-			]
-		},
-			{
-				type: 'hbox',
-				id: 'BlockFinishChecking',
-				widths: ['70%', '30%'],
-				onShow: function() {
-					this.getElement().hide();
-				},
-				onHide: showCurrentTabs,
-				children: [
 					{
-						type: 'hbox',
-						id: 'leftCol',
-						align: 'left',
-						width: '70%',
+						type: 'vbox',
+						id: 'bottomGroup',
+						style: 'width:560px; margin: 0 auto;',
 						children: [
 							{
-								type: 'vbox',
-								id: 'rightCol1',
+								type: 'hbox',
+								id: 'leftCol',
+								widths: ['66%', '34%'],
 								children: [
-			                        {
-										type: 'html',
-										id: 'logo',
-										html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
-										onShow: function() {
-											this.getElement().$.src = NS.logotype;
-											this.getElement().getParent().setStyles({
-												"text-align": "center"
-											})
-										}
+									{
+										type: 'vbox',
+										children: [
+											{
+												type: 'text',
+												id: 'text',
+												label: "Change to:",
+												labelLayout: 'horizontal',
+												labelStyle: 'font: 12px/25px arial, sans-serif;',
+												inputStyle: 'float: right; width: 200px;',
+												'default': '',
+												onShow: function() {
+													NS.textNode['GrammTab'] = this;
+												},
+												onHide: function() {
+													this.reset();
+												}
+											},
+											{
+												type: 'html',
+												id: 'html_text',
+												html: "<div style='min-height: 17px; line-height: 17px; padding: 5px; text-align: left;background: #F1F1F1;color: #595959; white-space: normal!important;'></div>",
+												onShow: function(e) {
+													NS.textNodeInfo['GrammTab'] = this;
+												}
+											},
+											{
+												type: 'html',
+												id: 'radio',
+												html: "",
+												onShow: function() {
+													NS.grammerSuggest = this;
+												}
+											}
+										]
+									},
+									{
+										type: 'vbox',
+										children: [
+											{
+												type: 'button',
+												id: 'ChangeTo',
+												label: 'Change to',
+												title: 'Change to',
+												style: 'width: 133px; float: right;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'IgnoreWord',
+												label: 'Ignore word',
+												title: 'Ignore word',
+												style: 'width: 133px; float: right;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'IgnoreAllWords',
+												label: 'Ignore Problem',
+												title: 'Ignore Problem',
+												style: 'width: 133px; float: right;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											},
+											{
+												type: 'button',
+												id: 'FinishChecking',
+												label: 'Finish Checking',
+												title: 'Finish Checking',
+												style: 'width: 133px; float: right; margin-top: 9px;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											}
+										]
 									}
-		                    	]
+								]
 							}
-	                    ]
+						]
 					},
-                    {
+					{
 						type: 'hbox',
-						id: 'rightCol',
-						align: 'right',
-						width: '30%',
+						id: 'BlockFinishChecking',
+						style: 'width:560px; margin: 0 auto;',
+						widths: ['70%', '30%'],
+						onShow: function() {
+							this.getElement().hide();
+						},
+						onHide: showCurrentTabs,
 						children: [
-		                    {
-								type: 'vbox',
-								id: 'rightCol_col__left',
+							{
+								type: 'hbox',
+								id: 'leftCol',
+								align: 'left',
+								width: '70%',
 								children: [
-			                        {
-										type: 'button',
-										id: 'FinishChecking',
-										label: 'Finish Checking',
-										title: 'Finish Checking',
-										style: 'width: 100%;',
-										onLoad: function() {
-											this.getElement().setAttribute("title-cmd", this.id);
-										},
-										onClick: handlerButtons
+									{
+										type: 'vbox',
+										id: 'rightCol1',
+										children: [
+											{
+												type: 'html',
+												id: 'logo',
+												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												setup: function() {
+													this.getElement().$.src = NS.logotype;
+													this.getElement().getParent().setStyles({
+														"text-align": "center"
+													})
+												}
+											}
+										]
 									}
-		                    	]
+								]
+							},
+							{
+								type: 'hbox',
+								id: 'rightCol',
+								align: 'right',
+								width: '30%',
+								children: [
+									{
+										type: 'vbox',
+										id: 'rightCol_col__left',
+										children: [
+											{
+												type: 'button',
+												id: 'FinishChecking',
+												label: 'Finish Checking',
+												title: 'Finish Checking',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											}
+										]
+									}
+								]
 							}
-	                    ]
+						]
 					}
-                ]
+				]
+			},
+			{
+				id: 'Thesaurus',
+				label: 'Thesaurus',
+				accessKey: 'T',
+				elements: [
+					{
+						type: 'html',
+						id: 'banner',
+						label: 'banner',
+						style: '', //TODO
+						html: '<div></div>'
+					},
+					{
+						type: 'html',
+						id: 'Content',
+						label: 'spellContent',
+						html: '',
+						setup: function() {
+							var tabId = NS.iframeNumber + '_' + NS.dialog._.currentTabId;
+							var iframe = document.getElementById(tabId);
+							NS.targetFromFrame[tabId] = iframe.contentWindow;
+						}
+					},
+					{
+						type: 'vbox',
+						id: 'bottomGroup',
+						style: 'width:560px; margin: 0 auto;',
+						children: [
+							{
+								type: 'hbox',
+								widths: ['75%', '25%'],
+								children: [
+									{
+										type: 'vbox',
+										children: [
+											{
+												type: 'hbox',
+												widths: ['65%', '35%'],
+												children: [
+													{
+														type: 'text',
+														id: 'ChangeTo',
+														label: 'Change to:',
+														labelLayout: 'horizontal',
+														inputStyle: 'width: 160px;',
+														labelStyle: 'font: 12px/25px arial, sans-serif;',
+														'default': '',
+														onShow: function(e) {
+															NS.textNode['Thesaurus'] = this;
+														},
+														onHide: function() {
+															this.reset();
+														}
+													},
+													{
+														type: 'button',
+														id: 'ChangeTo',
+														label: 'Change to',
+														title: 'Change to',
+														style: 'width: 121px; margin-top: 1px;',
+														onLoad: function() {
+															this.getElement().setAttribute("title-cmd", this.id);
+														},
+														onClick: handlerButtons
+													}
+												]
+											},
+											{
+												type: 'hbox',
+												children: [
+													{
+														type: 'select',
+														id: 'categories',
+														label: "Categories:",
+														labelStyle: 'font: 12px/25px arial, sans-serif;',
+														size: '5',
+														inputStyle: 'width: 180px; height: auto;',
+														items: [],
+														onShow: function() {
+															NS.selectNode['categories'] = this;
+														},
+														onHide: function() {
+															this.clear();
+														},
+														onChange: function() {
+															NS.buildOptionSynonyms(this.getValue())
+														}
+													},
+													{
+														type: 'select',
+														id: 'synonyms',
+														label: "Synonyms:",
+														labelStyle: 'font: 12px/25px arial, sans-serif;',
+														size: '5',
+														inputStyle: 'width: 180px; height: auto;',
+														items: [],
+														onShow: function() {
+															NS.selectNode['synonyms'] = this;
+															NS.textNode['Thesaurus'].setValue(this.getValue());
+														},
+														onHide: function() {
+															this.clear();
+														},
+														onChange: function(e) {
+															NS.textNode['Thesaurus'].setValue(this.getValue());
+														}
+													}
+												]
+											}
+										]
+									},
+									{
+										type: 'vbox',
+										width: '120px',
+										style: "margin-top:46px;",
+										children: [
+											{
+												type: 'html',
+												id: 'logotype',
+												label: 'WebSpellChecker.net',
+												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												setup: function() {
+													this.getElement().$.src = NS.logotype;
+													this.getElement().getParent().setStyles({
+														"text-align": "center"
+													})
+												}
+											},
+											{
+												type: 'button',
+												id: 'FinishChecking',
+												label: 'Finish Checking',
+												title: 'Finish Checking',
+												style: 'width: 121px; float: right; margin-top: 9px;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											}
+										]
+									}
+								]
+							}
+						]
+					},
+					{
+						type: 'hbox',
+						id: 'BlockFinishChecking',
+						style: 'width:560px; margin: 0 auto;',
+						widths: ['70%', '30%'],
+						onShow: function() {
+							this.getElement().hide();
+						},
+						children: [
+							{
+								type: 'hbox',
+								id: 'leftCol',
+								align: 'left',
+								width: '70%',
+								children: [
+									{
+										type: 'vbox',
+										id: 'rightCol1',
+										children: [
+											{
+												type: 'html',
+												id: 'logo',
+												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												setup: function() {
+													this.getElement().$.src = NS.logotype;
+													this.getElement().getParent().setStyles({
+														"text-align": "center"
+													})
+												}
+											}
+										]
+									}
+								]
+							},
+							{
+								type: 'hbox',
+								id: 'rightCol',
+								align: 'right',
+								width: '30%',
+								children: [
+									{
+										type: 'vbox',
+										id: 'rightCol_col__left',
+										children: [
+											{
+												type: 'button',
+												id: 'FinishChecking',
+												label: 'Finish Checking',
+												title: 'Finish Checking',
+												style: 'width: 100%;',
+												onLoad: function() {
+													this.getElement().setAttribute("title-cmd", this.id);
+												},
+												onClick: handlerButtons
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
 			}
-                ]
-		}
-        ]
+		]
 	};
 });
 
-
 // Options dialog
 CKEDITOR.dialog.add('options', function(editor) {
-	var manageMessage = new ManagerPostMessage;
 	var dialog = null;
 	var linkOnCheckbox = {};
 	var checkboxState = {};
@@ -1775,14 +1754,12 @@ CKEDITOR.dialog.add('options', function(editor) {
 
 	var set_osp = [];
 	var dictionaryState = {
-		'udn': tools.getCookie('udn'),
-		'osp': tools.getCookie('osp')
-		//'ud': tools.getCookie('ud'),
-		//'cmd': ''
+		'udn': appTools.cookie.get('udn'),
+		'osp': appTools.cookie.get('osp')
 	}
 
 	var setHandlerOptions = function() {
-		var osp = tools.getCookie('osp'),
+		var osp = appTools.cookie.get('osp'),
 			strToArr =  osp.split("");
 
 
@@ -1805,16 +1782,16 @@ CKEDITOR.dialog.add('options', function(editor) {
 		osp = osp.toString().replace(/,/g, "");
 
 
-		tools.setCookie('osp', osp);
-		tools.setCookie('udnCmd', cmd ? cmd : 'ignore');
+		appTools.cookie.set('osp', osp);
+		appTools.cookie.set('udnCmd', cmd ? cmd : 'ignore');
 		if (cmd == "delete") {
 
-			manageMessage.send({
+			appTools.postMessage.send({
 				'id': 'options_dic_send'
 			});
 		} else {
-			tools.setCookie('udn', nameNode.getValue() == '' ? '' : nameNode.getValue());
-			manageMessage.send({
+			appTools.cookie.set('udn', nameNode.getValue() == '' ? '' : nameNode.getValue());
+			appTools.postMessage.send({
 				'id': 'options_dic_send'
 			});
 		};
@@ -1832,12 +1809,10 @@ CKEDITOR.dialog.add('options', function(editor) {
 
 		osp = osp.toString().replace(/,/g, "");
 
-		tools.setCookie('osp', osp);
-		tools.setCookie('udn', nameNode.getValue());
-		//tools.setCookie('udnCmd', cmd ? cmd : 'ignore');
-		//tools.setCookie('ud', tools.getCookie('ud'));
+		appTools.cookie.set('osp', osp);
+		appTools.cookie.set('udn', nameNode.getValue());
 
-		manageMessage.send({
+		appTools.postMessage.send({
 			'id': 'options_checkbox_send'
 		});
 
@@ -1855,7 +1830,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 		minHeight: 130,
 		resizable: CKEDITOR.DIALOG_RESIZE_NONE,
 		contents: [
-            {
+			{
 			id: 'OptionsTab',
 			label: 'Options',
 			accessKey: 'O',
@@ -1874,214 +1849,210 @@ CKEDITOR.dialog.add('options', function(editor) {
 						}
 					]
 				},
-                    {
+				{
 				type: 'vbox',
 				id: 'Options_content',
 				children: [
-                            {
-					type: 'hbox',
-					id: 'Options_manager',
-					widths: ['52%', '48%'],
-					children: [
-                                    {
-						type: 'fieldset',
-						label: 'Spell Checking Options',
-						style: 'border: none;margin-top: 13px;padding: 10px 0 10px 10px',
-						onShow: function() {
-							this.getInputElement().$.children[0].innerHTML = NS.LocalizationComing['SpellCheckingOptions'];
-						},
+					{
+						type: 'hbox',
+						id: 'Options_manager',
+						widths: ['52%', '48%'],
 						children: [
-                                            {
-							type: 'vbox',
-							id: 'Options_checkbox',
-							children: [
-                                                    {
-								type: 'checkbox',
-								id: 'IgnoreAllCapsWords',
-								label: 'Ignore All-Caps Words',
-								labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
-								style: "float:left; min-height: 16px;",
-								'default': '',
-								onClick: function() {
-									checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+							{
+								type: 'fieldset',
+								label: 'Spell Checking Options',
+								style: 'border: none;margin-top: 13px;padding: 10px 0 10px 10px',
+								onShow: function() {
+									this.getInputElement().$.children[0].innerHTML = NS.LocalizationComing['SpellCheckingOptions'];
+								},
+								children: [
+									{
+										type: 'vbox',
+										id: 'Options_checkbox',
+										children: [
+											{
+												type: 'checkbox',
+												id: 'IgnoreAllCapsWords',
+												label: 'Ignore All-Caps Words',
+												labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
+												style: "float:left; min-height: 16px;",
+												'default': '',
+												onClick: function() {
+													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+												}
+											},
+											{
+												type: 'checkbox',
+												id: 'IgnoreWordsNumbers',
+												label: 'Ignore Words with Numbers',
+												labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
+												style: "float:left; min-height: 16px;",
+												'default': '',
+												onClick: function() {
+													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+												}
+											},
+											{
+												type: 'checkbox',
+												id: 'IgnoreMixedCaseWords',
+												label: 'Ignore Mixed-Case Words',
+												labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
+												style: "float:left; min-height: 16px;",
+												'default': '',
+												onClick: function() {
+													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+												}
+											},
+											{
+												type: 'checkbox',
+												id: 'IgnoreDomainNames',
+												label: 'Ignore Domain Names',
+												labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
+												style: "float:left; min-height: 16px;",
+												'default': '',
+												onClick: function() {
+													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+												}
+											}
+									]
 								}
-							},
-                                                    {
-								type: 'checkbox',
-								id: 'IgnoreWordsNumbers',
-								label: 'Ignore Words with Numbers',
-								labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
-								style: "float:left; min-height: 16px;",
-								'default': '',
-								onClick: function() {
-									checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
-								}
-							},
-                                                    {
-								type: 'checkbox',
-								id: 'IgnoreMixedCaseWords',
-								label: 'Ignore Mixed-Case Words',
-								labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
-								style: "float:left; min-height: 16px;",
-								'default': '',
-								onClick: function() {
-									checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
-								}
-							},
-                                                    {
-								type: 'checkbox',
-								id: 'IgnoreDomainNames',
-								label: 'Ignore Domain Names',
-								labelStyle: 'margin-left: 5px; font: 12px/16px arial, sans-serif;display: inline-block;white-space: normal;',
-								style: "float:left; min-height: 16px;",
-								'default': '',
-								onClick: function() {
-									checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
-								}
-							}
-                                                ]
-						}
-										]
-					},
-                                    {
-						type: 'vbox',
-						id: 'Options_DictionaryName',
-						children: [
-                        {
-							type: 'text',
-							id: 'DictionaryName',
-							style: 'margin-bottom: 10px',
-							label: 'Dictionary Name:',
-							labelLayout: 'vertical',
-							labelStyle: 'font: 12px/25px arial, sans-serif;',
-							'default': '',
-							onLoad: function() {
-								nameNode = this;
-								var udn = NS.userDictionaryName ? NS.userDictionaryName : tools.getCookie('udn') && undefined ? ' ' : this.getValue();
-								this.setValue(udn);
-							},
-							onShow: function() {
-								nameNode = this;
-								var udn = !tools.getCookie('udn') ? this.getValue() : tools.getCookie('udn');
-								this.setValue(udn);
-
-								this.setLabel(NS.LocalizationComing['DictionaryName']);
-							},
-							onHide: function() {
-								this.reset();
-							}
+							]
 						},
 						{
-							type: 'hbox',
-							id: 'Options_buttons',
+							type: 'vbox',
+							id: 'Options_DictionaryName',
 							children: [
-
-							{
-								type: 'vbox',
-								id: 'Options_leftCol_col',
-								widths: ['50%', '50%'],
-								children: [
-                                                            {
-									type: 'button',
-									id: 'create',
-									label: 'Create',
-									title: 'Create',
-									style: 'width: 100%;',
+								{
+									type: 'text',
+									id: 'DictionaryName',
+									style: 'margin-bottom: 10px',
+									label: 'Dictionary Name:',
+									labelLayout: 'vertical',
+									labelStyle: 'font: 12px/25px arial, sans-serif;',
+									'default': '',
 									onLoad: function() {
-										this.getElement().setAttribute("title-cmd", this.id);
+										nameNode = this;
+										var udn = NS.userDictionaryName ? NS.userDictionaryName : appTools.cookie.get('udn') && undefined ? ' ' : this.getValue();
+										this.setValue(udn);
 									},
 									onShow: function() {
-										this.getElement().setText(NS.LocalizationComing['Create']);
+										nameNode = this;
+										var udn = !appTools.cookie.get('udn') ? this.getValue() : appTools.cookie.get('udn');
+										this.setValue(udn);
+										this.setLabel(NS.LocalizationComing['DictionaryName']);
 									},
-									onClick: sendDicOptions
+									onHide: function() {
+										this.reset();
+									}
 								},
-                                                            {
-									type: 'button',
-									id: 'restore',
-									label: 'Restore',
-									title: 'Restore',
-									style: 'width: 100%;',
-									onLoad: function() {
-										this.getElement().setAttribute("title-cmd", this.id);
-									},
-									onShow: function() {
-										this.getElement().setText(NS.LocalizationComing['Restore']);
-									},
-									onClick: sendDicOptions
+								{
+									type: 'hbox',
+									id: 'Options_buttons',
+									children: [
+										{
+											type: 'vbox',
+											id: 'Options_leftCol_col',
+											widths: ['50%', '50%'],
+											children: [
+												{
+													type: 'button',
+													id: 'create',
+													label: 'Create',
+													title: 'Create',
+													style: 'width: 100%;',
+													onLoad: function() {
+														this.getElement().setAttribute("title-cmd", this.id);
+													},
+													onShow: function() {
+														this.getElement().setText(NS.LocalizationComing['Create']);
+													},
+													onClick: sendDicOptions
+												},
+												{
+													type: 'button',
+													id: 'restore',
+													label: 'Restore',
+													title: 'Restore',
+													style: 'width: 100%;',
+													onLoad: function() {
+														this.getElement().setAttribute("title-cmd", this.id);
+													},
+													onShow: function() {
+														this.getElement().setText(NS.LocalizationComing['Restore']);
+													},
+													onClick: sendDicOptions
+												}
+											]
+										},
+										{
+											type: 'vbox',
+											id: 'Options_rightCol_col',
+											widths: ['50%', '50%'],
+											children: [
+												{
+													type: 'button',
+													id: 'rename',
+													label: 'Rename',
+													title: 'Rename',
+													style: 'width: 100%;',
+													onLoad: function() {
+														this.getElement().setAttribute("title-cmd", this.id);
+													},
+													onShow: function() {
+														this.getElement().setText(NS.LocalizationComing['Rename']);
+													},
+													onClick: sendDicOptions
+												},
+												{
+													type: 'button',
+													id: 'delete',
+													label: 'Remove',
+													title: 'Remove',
+													style: 'width: 100%;',
+													onLoad: function() {
+														this.getElement().setAttribute("title-cmd", this.id);
+													},
+													onShow: function() {
+														this.getElement().setText(NS.LocalizationComing['Remove']);
+													},
+													onClick: sendDicOptions
+												}
+											]
+										}
+									]
 								}
-                                                        ]
-							},
-                                                    {
-								type: 'vbox',
-								id: 'Options_rightCol_col',
-								widths: ['50%', '50%'],
-								children: [
-                                                            {
-									type: 'button',
-									id: 'rename',
-									label: 'Rename',
-									title: 'Rename',
-									style: 'width: 100%;',
-									onLoad: function() {
-										this.getElement().setAttribute("title-cmd", this.id);
-									},
-									onShow: function() {
-										this.getElement().setText(NS.LocalizationComing['Rename']);
-									},
-									onClick: sendDicOptions
-								},
-                                                            {
-									type: 'button',
-									id: 'delete',
-									label: 'Remove',
-									title: 'Remove',
-									style: 'width: 100%;',
-									onLoad: function() {
-										this.getElement().setAttribute("title-cmd", this.id);
-									},
-									onShow: function() {
-										this.getElement().setText(NS.LocalizationComing['Remove']);
-									},
-									onClick: sendDicOptions
-								}
-                                                        ]
-							}
-                                                ]
+							]
 						}
-                                        ]
-					}
-                                ]
+					]
 				},
-                            {
+				{
 					type: 'hbox',
 					id: 'Options_text',
 					children: [
-                                    {
-						type: 'html',
-						style: "text-align: justify;margin-top: 15px;white-space: normal!important; font-size: 12px;color:#777;",
-						html: "<div>" + NS.LocalizationComing['OptionsTextIntro'] + "</div>",
-						onShow: function() {
-							this.getElement().setText(NS.LocalizationComing['OptionsTextIntro']);
-
+						{
+							type: 'html',
+							style: "text-align: justify;margin-top: 15px;white-space: normal!important; font-size: 12px;color:#777;",
+							html: "<div>" + NS.LocalizationComing['OptionsTextIntro'] + "</div>",
+							onShow: function() {
+								this.getElement().setText(NS.LocalizationComing['OptionsTextIntro']);
+							}
 						}
-					}
-                                ]
+					]
 				}
-                        ]
-			}
-                ]
+			]
 		}
-        ],
+	]
+}
+],
 		buttons: [CKEDITOR.dialog.okButton, CKEDITOR.dialog.cancelButton],
 		onOk: function() {
-			//sendCheckboxOptions(checkboxState);
 			sendAllOptions();
 			OptionsTextError.getElement().hide();
 			OptionsTextError.getElement().setHtml(' ');
 		},
 		onLoad: function() {
 			dialog = this;
-			manageMessage.init(cameOptions);
+			appTools.postMessage.init(cameOptions);
 
 			linkOnCheckbox['IgnoreAllCapsWords'] = dialog.getContentElement('OptionsTab', 'IgnoreAllCapsWords');
 			linkOnCheckbox['IgnoreWordsNumbers'] = dialog.getContentElement('OptionsTab', 'IgnoreWordsNumbers');
@@ -2108,4 +2079,40 @@ CKEDITOR.dialog.add('options', function(editor) {
 			linkOnCheckbox['IgnoreDomainNames'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreDomainNames'];
 		}
 	};
+});
+
+// Expand the spell-check frame when dialog resized. (#6829)
+CKEDITOR.dialog.on( 'resize', function( evt ) {
+	var data = evt.data,
+		dialog = data.dialog,
+		currentTabId = dialog._.currentTabId,
+		tabID = NS.iframeNumber + '_' + currentTabId,
+		iframe = CKEDITOR.document.getById(tabID);
+
+	if ( dialog._.name == 'checkspell' ) {
+		if (NS.bnr) {
+			iframe && iframe.setSize( 'height', data.height - '310' );
+		} else {
+			iframe && iframe.setSize( 'height', data.height - '220' );
+		};
+	}
+});
+
+CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
+    var dialogDefinition = dialogDefinitionEvent.data.definition;
+ 
+    NS.onLoadOverlay = new overlayBlock({
+		opacity: "1",
+		background: "#fff",
+		target: dialogDefinition.dialog.parts.tabs.getParent().$
+	});
+	NS.onLoadOverlay.setEnable();
+	dialogDefinition.dialog.on('show', function(event) {
+		//NS.div_overlay.setEnable();
+	})
+    dialogDefinition.dialog.on('cancel', function(cancelEvent) {
+    		dialogDefinition.dialog.getParentEditor().config.wsc_onClose.call(this.document.getWindow().getFrame())
+    		NS.div_overlay.setDisable();
+    	return false;
+    }, this, null, -1);
 });
