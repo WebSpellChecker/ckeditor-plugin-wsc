@@ -17,10 +17,10 @@
 		var str,
 		type = Object.prototype.toString,
 			objObject = "[object Object]";
-		fn = o.fn || null;
-		id = o.id || '';
-		target = o.target || window;
-		message = o.message || {
+		var fn = o.fn || null;
+		var id = o.id || '';
+		var target = o.target || window;
+		var message = o.message || {
 			'id': id
 		};
 
@@ -211,7 +211,7 @@
 			nameNode.setValue('');
 		}
 	}
-	iframeOnload = false;
+	var iframeOnload = false;
 
 
 	NS.framesetHtml = function(tab) {
