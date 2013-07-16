@@ -306,7 +306,7 @@
 			tabID = NS.iframeNumber + '_' + currentTab;
 			NS.div_overlay.setEnable();
 
-			if (that.getElement().getChildCount() == 0) {
+			if (!that.getElement().getChildCount()) {
 				NS.setIframe(that, currentTab);
 				iframe = document.getElementById(tabID);
 				NS.targetFromFrame[tabID] = iframe.contentWindow;
@@ -1011,7 +1011,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				var number_ck = NS.CKNumber + 1,
 					id_tab = CKEDITOR.document.getById('cke_dialog_tabs_' + number_ck);
 				id_tab.setStyle('width', '97%');
-				if (id_tab.getElementsByTag('DIV').count() == 0){
+				if (!id_tab.getElementsByTag('DIV').count()){
 					id_tab.append(NS.buildSelectLang());
 				}
 
@@ -1791,7 +1791,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 				'id': 'options_dic_send'
 			});
 		} else {
-			appTools.cookie.set('udn', nameNode.getValue() == '' ? '' : nameNode.getValue());
+			appTools.cookie.set('udn', nameNode.getValue() || '');
 			appTools.postMessage.send({
 				'id': 'options_dic_send'
 			});
@@ -1879,7 +1879,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1890,7 +1890,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1901,7 +1901,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1912,7 +1912,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											}
 									]
@@ -2064,15 +2064,15 @@ CKEDITOR.dialog.add('options', function(editor) {
 		onShow: function() {
 			setHandlerOptions();
 
-			(checkboxState['IgnoreAllCapsWords'] == 0) ? linkOnCheckbox['IgnoreAllCapsWords'].setValue('', false) : linkOnCheckbox['IgnoreAllCapsWords'].setValue('checked', false);
-			(checkboxState['IgnoreWordsNumbers'] == 0) ? linkOnCheckbox['IgnoreWordsNumbers'].setValue('', false) : linkOnCheckbox['IgnoreWordsNumbers'].setValue('checked', false);
-			(checkboxState['IgnoreMixedCaseWords'] == 0) ? linkOnCheckbox['IgnoreMixedCaseWords'].setValue('', false) : linkOnCheckbox['IgnoreMixedCaseWords'].setValue('checked', false);
-			(checkboxState['IgnoreDomainNames'] == 0) ? linkOnCheckbox['IgnoreDomainNames'].setValue('', false) : linkOnCheckbox['IgnoreDomainNames'].setValue('checked', false);
+			(!checkboxState['IgnoreAllCapsWords']) ? linkOnCheckbox['IgnoreAllCapsWords'].setValue('', false) : linkOnCheckbox['IgnoreAllCapsWords'].setValue('checked', false);
+			(!checkboxState['IgnoreWordsNumbers']) ? linkOnCheckbox['IgnoreWordsNumbers'].setValue('', false) : linkOnCheckbox['IgnoreWordsNumbers'].setValue('checked', false);
+			(!checkboxState['IgnoreMixedCaseWords']) ? linkOnCheckbox['IgnoreMixedCaseWords'].setValue('', false) : linkOnCheckbox['IgnoreMixedCaseWords'].setValue('checked', false);
+			(!checkboxState['IgnoreDomainNames']) ? linkOnCheckbox['IgnoreDomainNames'].setValue('', false) : linkOnCheckbox['IgnoreDomainNames'].setValue('checked', false);
 
-			checkboxState['IgnoreAllCapsWords'] = (linkOnCheckbox['IgnoreAllCapsWords'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreWordsNumbers'] = (linkOnCheckbox['IgnoreWordsNumbers'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreMixedCaseWords'] = (linkOnCheckbox['IgnoreMixedCaseWords'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreDomainNames'] = (linkOnCheckbox['IgnoreDomainNames'].getValue() == false) ? 0 : 1;
+			checkboxState['IgnoreAllCapsWords'] = (!linkOnCheckbox['IgnoreAllCapsWords'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreWordsNumbers'] = (!linkOnCheckbox['IgnoreWordsNumbers'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreMixedCaseWords'] = (!linkOnCheckbox['IgnoreMixedCaseWords'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreDomainNames'] = (!linkOnCheckbox['IgnoreDomainNames'].getValue()) ? 0 : 1;
 
 			linkOnCheckbox['IgnoreAllCapsWords'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreAllCapsWords'];
 			linkOnCheckbox['IgnoreWordsNumbers'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreWordsWithNumbers'];
