@@ -2,6 +2,7 @@
  * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
+ (function() {
   // Create support tools 
  var appTools = (function(){
  	var _init = function(handler) {
@@ -2116,3 +2117,4 @@ CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
     	return false;
     }, this, null, -1);
 });
+})();
