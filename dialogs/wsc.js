@@ -10,24 +10,24 @@
 			window.addEventListener('message', handler, false);
 		} else {
 			window.attachEvent("onmessage", handler);
-		};
+		}
 	};
 
 	var _sendCmd = function(o) {
 		var str,
 		type = Object.prototype.toString,
 			objObject = "[object Object]";
-		fn = o.fn || null;
-		id = o.id || '';
-		target = o.target || window;
-		message = o.message || {
+		var fn = o.fn || null;
+		var id = o.id || '';
+		var target = o.target || window;
+		var message = o.message || {
 			'id': id
 		};
 
 		if (type.call(o.message) == objObject) {
 			(o.message.id) ? o.message.id : o.message.id = id;
 			message = o.message;
-		};
+		}
 
 		str = JSON.stringify(message, fn);
 		target.postMessage(str, '*');
@@ -66,8 +66,8 @@
 	    	updatedCookie += "; " + propName;
 	    if (propValue !== true) {
 			updatedCookie += "=" + propValue;
-		};
-	  };
+		}
+	  }
 	  document.cookie = updatedCookie;
 	};
 
@@ -79,7 +79,7 @@
 	};
 
 	var deleteCookie = function(name) {
-	  setCookie(name, "", { expires: -1 })
+	  setCookie(name, "", { expires: -1 });
 	};
 
 	return {
@@ -101,7 +101,7 @@
 			get: getCookie,
 			remove: deleteCookie
 		}
-	}
+	};
  })();
 
 
@@ -194,7 +194,7 @@
 
 		for(var i in obj) {
 			obj[i].instance.getElement().setText(NS.LocalizationComing[i]);
-		};
+		}
 	};
 
 	var SetLocalizationLabel = function(obj) {
@@ -202,20 +202,20 @@
 		for(var i in obj) {
 			if (!obj[i].instance.setLabel) {
 				return;
-			};
+			}
 			obj[i].instance.setLabel(NS.LocalizationComing[i]);
-		};
+		}
 	};
 	function OptionsConfirm(state) {
 		if (state) {
 			nameNode.setValue('');
-		};
-	};
-	iframeOnload = false;
+		}
+	}
+	var iframeOnload = false;
 
 
 	NS.framesetHtml = function(tab) {
-		var str = '<iframe src="' + NS.templatePath + NS.serverLocation +'" id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>'
+		var str = '<iframe src="' + NS.templatePath + NS.serverLocation +'" id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>';
 		return str;
 	};
 
@@ -296,23 +296,23 @@
 		scope.parts.tabs.on('click', function(event) {
 			event = event || window.event;
 			if (!event.data.getTarget().is('a')) {
-				return
-			};
+				return;
+			}
 
-			if (currentTab == scope._.currentTabId) { return };
+			if (currentTab == scope._.currentTabId) { return; }
 
 			currentTab = scope._.currentTabId;
 			that = scope._.contents[currentTab].Content;
 			tabID = NS.iframeNumber + '_' + currentTab;
 			NS.div_overlay.setEnable();
 
-			if (that.getElement().getChildCount() == 0) {
+			if (!that.getElement().getChildCount()) {
 				NS.setIframe(that, currentTab);
 				iframe = document.getElementById(tabID);
 				NS.targetFromFrame[tabID] = iframe.contentWindow;
 			} else {
 				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
-			};
+			}
 		});
 	};
 
@@ -332,7 +332,7 @@
 			'white-space': 'normal'
 		});
 
-		selectContainer.setAttribute('id', id)
+		selectContainer.setAttribute('id', id);
 		selectContainer.addClass("cke_dialog_ui_input_select");
 		selectContainer.setStyles({
 			'width': '160px'
@@ -356,7 +356,7 @@
 		if(select.options.length === 0) {
 			for (var lang in key) {
 				sort.push([lang, key[lang]]);
-			};
+			}
 			sort.sort();
 
 			for (var i = 0; i < sort.length; i++) {
@@ -367,12 +367,12 @@
 
 				if (sort[i][1] == NS.selectingLang) {
 					create_option.setAttribute("selected", "selected");
-				};
+				}
 
 				fragment.appendChild(create_option);
-			};
+			}
 			select.appendChild(fragment);
-		};
+		}
 	};
 
 	NS.buildOptionSynonyms = function(key) {
@@ -381,10 +381,10 @@
 
 		for (var item = 0; item < syn.length; item++) {
 			NS.selectNode['synonyms'].add(syn[item], syn[item]);
-		};
+		}
 
 		NS.selectNode['synonyms'].getInputElement().$.firstChild.selected = true;
-		NS.textNode['Thesaurus'].setValue(NS.selectNode['synonyms'].getInputElement().getValue())
+		NS.textNode['Thesaurus'].setValue(NS.selectNode['synonyms'].getInputElement().getValue());
 	};
 
 	var setBannerInPlace = function(htmlBanner) {
@@ -414,12 +414,12 @@
 			"background:" + background + ";" +
 			"opacity: " + opacity + ";" +
 			"filter: alpha(opacity=" + opacity * 100 + ");" +
-			"display: none;"
+			"display: none;";
 		thisOverlay.id = overlayId;
 
 		if (!getOverlay) {
 		target.appendChild(thisOverlay);
-		};
+		}
 
 		return {
 			setDisable: function() {
@@ -428,7 +428,7 @@
 			setEnable: function() {
 				thisOverlay.style.display = "block";
 			}
-		}
+		};
 	};
 
 	var buildRadioInputs = function(key, value, check) {
@@ -456,7 +456,7 @@
 		});
 
 		radioButton.on("click", function(data) {
-			NS.textNode['GrammTab'].setValue(data.sender.getValue())
+			NS.textNode['GrammTab'].setValue(data.sender.getValue());
 		});
 
 		(check) ? radioButton.setAttribute("checked", true) : false;
@@ -517,7 +517,7 @@
 			function styleDisable(instanceButton) {
 				var button = NS.LocalizationButton[instanceButton].instance;
 				button.getElement().hasClass('cke_disabled') ? button.getElement().setStyle('color', '#a0a0a0') : button.disable();
-			};
+			}
 
 			styleDisable('ChangeTo');
 			styleDisable('ChangeAll');
@@ -529,7 +529,7 @@
 			NS.LocalizationButton['ChangeTo'].instance.getElement().setStyle('color', '#333');
 			NS.LocalizationButton['ChangeAll'].instance.getElement().setStyle('color', '#333');
 			return word;
-		};
+		}
 	};
 
 	var handlerId = {
@@ -549,7 +549,7 @@
 
 			if (NS.show_grammar == 'false') {
 				hideGrammTab();
-			};
+			}
 
 			var word =  disableButtonSuggest(response.word),
 				suggestionsList = '';
@@ -557,7 +557,7 @@
 			if (word instanceof Array) {
 				word = response.word[0];
 
-			};
+			}
 
 			word = word.split(',');
 			suggestionsList = word;
@@ -566,7 +566,7 @@
 
 			for (var item = 0; item < suggestionsList.length; item++) {
 				selectNode.add(suggestionsList[item], suggestionsList[item]);
-			};
+			}
 
 			showCurrentTabs();
 			NS.div_overlay.setDisable();
@@ -594,7 +594,7 @@
 				for (var i = 0; i < len; i++) {
 					NS.grammerSuggest.getElement().append(buildRadioInputs(arr[i], arr[i], check));
 					check = false;
-				};
+				}
 
 			showCurrentTabs();
 			NS.div_overlay.setDisable();
@@ -613,7 +613,7 @@
 
 			for (var i in response) {
 				NS.selectNode['categories'].add(i, i);
-			};
+			}
 
 			var synKey = NS.selectNode['categories'].getInputElement().getChildren().$[0].value;
 			NS.selectNode['categories'].getInputElement().getChildren().$[0].selected = true;
@@ -661,7 +661,7 @@
 				'osp': appTools.cookie.get('osp'),
 				'udn': appTools.cookie.get('udn'),
 				'cust_dic_ids': NS.cust_dic_ids
-			}
+			};
 
 			var currentTabId = NS.dialog._.currentTabId,
 				frameId = NS.iframeNumber + '_' + currentTabId;
@@ -684,11 +684,11 @@
 				setBannerInPlace(response.banner);
 			} else {
 				NS.setHeightFrame();
-			};
+			}
 
 			if (NS.show_grammar == 'false') {
 				hideGrammTab();
-			};
+			}
 
 			if (udn == 'undefined') {
 				if (NS.userDictionaryName) {
@@ -709,8 +709,8 @@
 
 				} else{
 					udn = '';
-				};
-			};
+				}
+			}
 
 			appTools.cookie.set('osp', response.DefOptions.osp);
 			appTools.cookie.set('udn', udn);
@@ -768,7 +768,7 @@
 			langConstructor(NS.langList);
 		}
 
-	}
+	};
 
 	var handlerIncomingData = function(event) {
 		event = event || window.event;
@@ -835,12 +835,12 @@
 			var _getCmd = function(cmd) {
 				for (var tabId in cmdView) {
 					obj[cmdView[tabId]] = tabId;
-				};
+				}
 			return obj[cmd];
 			};
 			return {
 				getCmdByTab: _getCmd
-			}
+			};
 		};
 
 		var cmdM = new cmdManger(NS.cmd);
@@ -912,15 +912,15 @@ function __constructLangSelectbox(languageGroup) {
 	o_arr.sort();
 	if(priorLangTitle) {
 		o_arr.unshift( priorLangTitle );
-	};
+	}
 
 	var searchGroup = function ( code ){
 		for ( var group in languageGroup){
 			for ( var langCode in languageGroup[group]){
 				if ( langCode.toUpperCase() === code.toUpperCase() )
 					return group;
-			};
-		};
+			}
+		}
 		return "";
 	};
 
@@ -930,8 +930,8 @@ function __constructLangSelectbox(languageGroup) {
 		for (var group in languageGroup) {
 			for ( var langCode in languageGroup[group]){
 				langList[languageGroup[group][langCode]] = langCode;
-			};
-		};
+			}
+		}
 		return langList;
 	};
 
@@ -943,7 +943,7 @@ function __constructLangSelectbox(languageGroup) {
 	};
 
 	return _return;
-};
+}
 
 NS.CKNumber = CKEDITOR.tools.getNextNumber();
 CKEDITOR.dialog.add('checkspell', function(editor) {
@@ -967,7 +967,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 		if (this.getElement().getAttribute("title-cmd") == 'FinishChecking') {
 			editor.config.wsc_onFinish.call(CKEDITOR.document.getWindow().getFrame());
-		};
+		}
 
 	};
 	var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
@@ -990,7 +990,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			CKEDITOR.scriptLoader.load(wscCoreUrl, function(success) {
 				NS.pluginPath = CKEDITOR.getUrl(editor.plugins.wsc.path);
 				
-				NS.iframeNumber = NS.TextAreaNumber//'cke_frame_' + NS.CKNumber;
+				NS.iframeNumber = NS.TextAreaNumber; //'cke_frame_' + NS.CKNumber;
 				NS.serverLocationHash = DefaultParams.serviceHost;
 				NS.serverLocation = '#server=' + NS.serverLocationHash;
 				NS.logotype = DefaultParams.logoPath;
@@ -1011,7 +1011,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				var number_ck = NS.CKNumber + 1,
 					id_tab = CKEDITOR.document.getById('cke_dialog_tabs_' + number_ck);
 				id_tab.setStyle('width', '97%');
-				if (id_tab.getElementsByTag('DIV').count() == 0){
+				if (!id_tab.getElementsByTag('DIV').count()){
 					id_tab.append(NS.buildSelectLang());
 				}
 
@@ -1027,7 +1027,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				if (success) {
 					showFirstTab(NS.dialog);
 					NS.dialog.setupContent(NS.dialog);
-				};
+				}
 			});
 
 		},
@@ -1118,7 +1118,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 																	this.getElement().$.src = NS.logotype;
 																	this.getElement().getParent().setStyles({
 																		"text-align": "left"
-																	})
+																	});
 																}
 															}
 														]
@@ -1253,7 +1253,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 														alert('WSC: Options functionality is disabled when runing from file system');
 													} else {
 														editor.openDialog('options');
-													};
+													}
 												}
 											}
 										]
@@ -1285,7 +1285,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 									this.getChild()[0].getElement().$.src = NS.logotype;
 									this.getChild()[0].getElement().getParent().setStyles({
 										"text-align": "center"
-									})
+									});
 								},
 								children: [
 									{
@@ -1324,7 +1324,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												alert('WSC: Options functionality is disabled when runing from file system');
 											} else {
 												editor.openDialog('options');
-											};
+											}
 										}
 									},
 									{
@@ -1496,7 +1496,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
 														"text-align": "center"
-													})
+													});
 												}
 											}
 										]
@@ -1617,7 +1617,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 															this.clear();
 														},
 														onChange: function() {
-															NS.buildOptionSynonyms(this.getValue())
+															NS.buildOptionSynonyms(this.getValue());
 														}
 													},
 													{
@@ -1657,7 +1657,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
 														"text-align": "center"
-													})
+													});
 												}
 											},
 											{
@@ -1704,7 +1704,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
 														"text-align": "center"
-													})
+													});
 												}
 											}
 										]
@@ -1757,7 +1757,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 	var dictionaryState = {
 		'udn': appTools.cookie.get('udn'),
 		'osp': appTools.cookie.get('osp')
-	}
+	};
 
 	var setHandlerOptions = function() {
 		var osp = appTools.cookie.get('osp'),
@@ -1791,11 +1791,11 @@ CKEDITOR.dialog.add('options', function(editor) {
 				'id': 'options_dic_send'
 			});
 		} else {
-			appTools.cookie.set('udn', nameNode.getValue() == '' ? '' : nameNode.getValue());
+			appTools.cookie.set('udn', nameNode.getValue() || '');
 			appTools.postMessage.send({
 				'id': 'options_dic_send'
 			});
-		};
+		}
 
 	};
 
@@ -1879,7 +1879,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1890,7 +1890,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1901,7 +1901,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											},
 											{
@@ -1912,7 +1912,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 												style: "float:left; min-height: 16px;",
 												'default': '',
 												onClick: function() {
-													checkboxState[this.id] = (this.getValue() == false) ? 0 : 1;
+													checkboxState[this.id] = (!this.getValue()) ? 0 : 1;
 												}
 											}
 									]
@@ -2064,15 +2064,15 @@ CKEDITOR.dialog.add('options', function(editor) {
 		onShow: function() {
 			setHandlerOptions();
 
-			(checkboxState['IgnoreAllCapsWords'] == 0) ? linkOnCheckbox['IgnoreAllCapsWords'].setValue('', false) : linkOnCheckbox['IgnoreAllCapsWords'].setValue('checked', false);
-			(checkboxState['IgnoreWordsNumbers'] == 0) ? linkOnCheckbox['IgnoreWordsNumbers'].setValue('', false) : linkOnCheckbox['IgnoreWordsNumbers'].setValue('checked', false);
-			(checkboxState['IgnoreMixedCaseWords'] == 0) ? linkOnCheckbox['IgnoreMixedCaseWords'].setValue('', false) : linkOnCheckbox['IgnoreMixedCaseWords'].setValue('checked', false);
-			(checkboxState['IgnoreDomainNames'] == 0) ? linkOnCheckbox['IgnoreDomainNames'].setValue('', false) : linkOnCheckbox['IgnoreDomainNames'].setValue('checked', false);
+			(!checkboxState['IgnoreAllCapsWords']) ? linkOnCheckbox['IgnoreAllCapsWords'].setValue('', false) : linkOnCheckbox['IgnoreAllCapsWords'].setValue('checked', false);
+			(!checkboxState['IgnoreWordsNumbers']) ? linkOnCheckbox['IgnoreWordsNumbers'].setValue('', false) : linkOnCheckbox['IgnoreWordsNumbers'].setValue('checked', false);
+			(!checkboxState['IgnoreMixedCaseWords']) ? linkOnCheckbox['IgnoreMixedCaseWords'].setValue('', false) : linkOnCheckbox['IgnoreMixedCaseWords'].setValue('checked', false);
+			(!checkboxState['IgnoreDomainNames']) ? linkOnCheckbox['IgnoreDomainNames'].setValue('', false) : linkOnCheckbox['IgnoreDomainNames'].setValue('checked', false);
 
-			checkboxState['IgnoreAllCapsWords'] = (linkOnCheckbox['IgnoreAllCapsWords'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreWordsNumbers'] = (linkOnCheckbox['IgnoreWordsNumbers'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreMixedCaseWords'] = (linkOnCheckbox['IgnoreMixedCaseWords'].getValue() == false) ? 0 : 1;
-			checkboxState['IgnoreDomainNames'] = (linkOnCheckbox['IgnoreDomainNames'].getValue() == false) ? 0 : 1;
+			checkboxState['IgnoreAllCapsWords'] = (!linkOnCheckbox['IgnoreAllCapsWords'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreWordsNumbers'] = (!linkOnCheckbox['IgnoreWordsNumbers'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreMixedCaseWords'] = (!linkOnCheckbox['IgnoreMixedCaseWords'].getValue()) ? 0 : 1;
+			checkboxState['IgnoreDomainNames'] = (!linkOnCheckbox['IgnoreDomainNames'].getValue()) ? 0 : 1;
 
 			linkOnCheckbox['IgnoreAllCapsWords'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreAllCapsWords'];
 			linkOnCheckbox['IgnoreWordsNumbers'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreWordsWithNumbers'];
@@ -2095,7 +2095,7 @@ CKEDITOR.dialog.on( 'resize', function( evt ) {
 			iframe && iframe.setSize( 'height', data.height - '310' );
 		} else {
 			iframe && iframe.setSize( 'height', data.height - '220' );
-		};
+		}
 	}
 });
 
@@ -2110,9 +2110,9 @@ CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
 	NS.onLoadOverlay.setEnable();
 	dialogDefinition.dialog.on('show', function(event) {
 		//NS.div_overlay.setEnable();
-	})
+	});
     dialogDefinition.dialog.on('cancel', function(cancelEvent) {
-    		dialogDefinition.dialog.getParentEditor().config.wsc_onClose.call(this.document.getWindow().getFrame())
+    		dialogDefinition.dialog.getParentEditor().config.wsc_onClose.call(this.document.getWindow().getFrame());
     		NS.div_overlay.setDisable();
     	return false;
     }, this, null, -1);
