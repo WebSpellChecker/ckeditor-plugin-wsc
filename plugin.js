@@ -47,8 +47,8 @@ CKEDITOR.plugins.add( 'wsc', {
 				strDialog = strIeDialog;
 			} else {
 				strDialog = strNormalDialog;
-			};
-		};
+			}
+		}
 		CKEDITOR.dialog.add( commandName, this.path + strDialog );
 	},
 	beforeInit: function( editor ) {
