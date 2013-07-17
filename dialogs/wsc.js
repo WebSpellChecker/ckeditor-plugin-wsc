@@ -129,10 +129,6 @@
 		NS.banner = '';
 		NS.show_grammar = null;
 		NS.div_overlay_no_check = null;
-		NS.wsc_customerId =  CKEDITOR.config.wsc_customerId;
-		NS.cust_dic_ids = CKEDITOR.config.wsc_customDictionaryIds;
-		NS.userDictionaryName = CKEDITOR.config.wsc_userDictionaryName;
-		NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
 		NS.targetFromFrame = {};
 		NS.onLoadOverlay = null;
 		NS.LocalizationComing = {};
@@ -970,8 +966,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		}
 
 	};
-	var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
-	var wscCoreUrl = CKEDITOR.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + CKEDITOR.config.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
 	
 	var oneLoadFunction = null;	
 
@@ -987,6 +981,19 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			NS.dataTemp = CKEDITOR.currentInstance.getData();
 			//NS.div_overlay.setDisable();
 			NS.OverlayPlace = NS.dialog.parts.tabs.getParent().$;
+			if(CKEDITOR && CKEDITOR.config){
+				//console.log
+				NS.wsc_customerId =  CKEDITOR.config.wsc_customerId;
+				NS.cust_dic_ids = CKEDITOR.config.wsc_customDictionaryIds;
+				NS.userDictionaryName = CKEDITOR.config.wsc_userDictionaryName;
+				NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
+				var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
+				var wscCoreUrl = CKEDITOR.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + CKEDITOR.config.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
+			} else {
+				NS.dialog.hide();
+				return;
+			}
+
 			CKEDITOR.scriptLoader.load(wscCoreUrl, function(success) {
 
 				if(CKEDITOR.config && CKEDITOR.config.wsc && CKEDITOR.config.wsc.DefaultParams){
