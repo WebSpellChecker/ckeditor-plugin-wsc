@@ -123,7 +123,6 @@
 		NS.textNodeInfo = {};
 		NS.selectNode = {};
 		NS.selectNodeResponce = {};
-		NS.selectingLang = NS.currentLang;
 		NS.langList = null;
 		NS.langSelectbox = null;
 		NS.banner = '';
@@ -288,9 +287,9 @@
 		NS.setIframe(that, currentTab);
 		scope.parts.tabs.removeAllListeners();
 		
-
 		scope.parts.tabs.on('click', function(event) {
 			event = event || window.event;
+
 			if (!event.data.getTarget().is('a')) {
 				return;
 			}
@@ -401,7 +400,7 @@
 
 		thisOverlay.style.cssText = "position: absolute;" +
 			"top:30px;" +
-			"bottom:40px;" +
+			"bottom:41px;" +
 			"left:1px;" +
 			"right:1px;" +
 			"z-index: 10020;" +
@@ -484,6 +483,9 @@
 		NS.buildOptionLang(langSelectBox.setLangList);
 
 		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
+		if(NS.show_grammar == 'false'){
+			hideGrammTab()
+		}; //#19221
 
 		selectContainer.onchange = function(e){
 			e = e || window.event;
@@ -543,10 +545,6 @@
 			hideCurrentFinishChecking();
 			langConstructor(NS.langList);
 
-			if (NS.show_grammar == 'false') {
-				hideGrammTab();
-			}
-
 			var word =  disableButtonSuggest(response.word),
 				suggestionsList = '';
 
@@ -574,6 +572,7 @@
 			delete response.mocklangs;
 
 			hideCurrentFinishChecking();
+			langConstructor(NS.langList);	// Show select language for this command CKEDITOR.config.wsc_cmd
 			var firstSuggestValue = response.grammSuggest[0];// ? firstSuggestValue = response.grammSuggest[0] : firstSuggestValue = 'No suggestion for this words';
 			NS.grammerSuggest.getElement().setHtml('');
 
@@ -601,7 +600,7 @@
 			delete response.mocklangs;
 
 			hideCurrentFinishChecking();
-
+			langConstructor(NS.langList);	// Show select language for this command CKEDITOR.config.wsc_cmd
 			NS.selectNodeResponce = response;
 
 			NS.textNode['Thesaurus'].reset();
@@ -680,10 +679,6 @@
 				setBannerInPlace(response.banner);
 			} else {
 				NS.setHeightFrame();
-			}
-
-			if (NS.show_grammar == 'false') {
-				hideGrammTab();
 			}
 
 			if (udn == 'undefined') {
@@ -1017,7 +1012,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				
 				NS.LangComparer.setDefaulLangCode( NS.defaultLanguage );
 				NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode );
-
+				NS.selectingLang = NS.currentLang;
 				NS.div_overlay = new overlayBlock({
 					opacity: "1",
 					background: "#fff url(" + NS.loadIcon + ") no-repeat 50% 50%",
@@ -1575,7 +1570,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 					{
 						type: 'vbox',
 						id: 'bottomGroup',
-						style: 'width:560px; margin: 0 auto;',
+						style: 'width:560px; margin: -10px auto; overflow: hidden;',
 						children: [
 							{
 								type: 'hbox',
