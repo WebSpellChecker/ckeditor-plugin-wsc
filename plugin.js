@@ -17,8 +17,6 @@ CKEDITOR.plugins.add( 'wsc', {
 	parseConfig: function(editor) {
 		editor.config.wsc_onFinish = (typeof editor.config.wsc_onFinish === 'function') ? editor.config.wsc_onFinish : function() {};
 		editor.config.wsc_onClose = (typeof editor.config.wsc_onClose === 'function') ? editor.config.wsc_onClose : function() {};
-
-		CKEDITOR.config.wsc_stack.push(editor);
 	},
 	init: function( editor ) {
 		var commandName = 'checkspell';
@@ -59,8 +57,6 @@ CKEDITOR.plugins.add( 'wsc', {
 
 });
 
-
-CKEDITOR.config.wsc_stack = [];
 CKEDITOR.config.wsc_customerId = CKEDITOR.config.wsc_customerId || '1:ua3xw1-2XyGJ3-GWruD3-6OFNT1-oXcuB1-nR6Bp4-hgQHc-EcYng3-sdRXG3-NOfFk';
 CKEDITOR.config.wsc_customDictionaryIds = CKEDITOR.config.wsc_customDictionaryIds || '';
 CKEDITOR.config.wsc_userDictionaryName = CKEDITOR.config.wsc_userDictionaryName || '';
