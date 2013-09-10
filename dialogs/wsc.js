@@ -210,7 +210,7 @@
 	var nameNode, selectNode, frameId;
 
 	NS.framesetHtml = function(tab) {
-		var str = '<iframe src="' + NS.templatePath + NS.serverLocation +'" id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>';
+		var str = '<iframe src="' + NS.templatePath + '" id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>';
 		return str;
 	};
 
@@ -1012,9 +1012,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 				NS.pluginPath = CKEDITOR.getUrl(editor.plugins.wsc.path);
 				NS.iframeNumber = NS.TextAreaNumber;
-				NS.serverLocation = '#server=' + NS.serverLocationHash;
 				NS.templatePath = NS.pluginPath + 'dialogs/tmp.html';
-				
 				NS.LangComparer.setDefaulLangCode( NS.defaultLanguage );
 				NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode );
 				NS.selectingLang = NS.currentLang;
