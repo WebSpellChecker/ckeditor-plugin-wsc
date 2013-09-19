@@ -770,7 +770,9 @@
 		event = event || window.event;
 		var response = window.JSON.parse(event.data);
 
-		handlerId[response.id](response);
+		if(response && response.id) {
+			handlerId[response.id](response);
+		}
 	};
 
 	var handlerButtonOptions = function(event) {
