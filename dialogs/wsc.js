@@ -631,13 +631,19 @@
 		},
 		settext: function(response) {
 			delete response.id;
-	
-			//CKEDITOR.currentInstance.focus()
-			//CKEDITOR.currentInstance.setData(response.text, NS.dataTemp = '');
-			NS.dialog.getParentEditor().focus();
-			NS.dialog.getParentEditor().setData(response.text, NS.dataTemp = '');
-			NS.dialog.hide();
 
+			var command = NS.dialog.getParentEditor().getCommand( 'checkspell' ),
+				editor = NS.dialog.getParentEditor();
+			
+			editor.focus();
+
+			editor.setData(response.text, function(){
+				NS.dataTemp = '';
+				editor.unlockSelection();
+				editor.fire('saveSnapshot');
+				NS.dialog.hide();
+			});
+		
 		},
 		ReplaceText: function(response) {
 			delete response.id;
@@ -952,11 +958,13 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		NS.div_overlay.setEnable();
 		var currentTabId = NS.dialog._.currentTabId,
 			frameId = NS.iframeNumber + '_' + currentTabId,
-			new_word = NS.textNode[currentTabId].getValue();
+			new_word = NS.textNode[currentTabId].getValue(),
+			cmd = this.getElement().getAttribute("title-cmd");
+	
 
 		appTools.postMessage.send({
 			'message': {
-				'cmd': this.getElement().getAttribute("title-cmd"),
+				'cmd': cmd,
 				'tabId': currentTabId,
 				'new_word': new_word
 			},
@@ -964,7 +972,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			'id': 'cmd_outer__page'
 		});
 
-		if (this.getElement().getAttribute("title-cmd") == 'FinishChecking') {
+		if (cmd == 'ChangeTo' || cmd == 'ChangeAll') {
+			editor.fire('saveSnapshot');
+		}
+
+		if (cmd == 'FinishChecking') {
 			editor.config.wsc_onFinish.call(CKEDITOR.document.getWindow().getFrame());
 		}
 
@@ -977,8 +989,16 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		minWidth: 560,
 		minHeight: 444,
 		buttons: [CKEDITOR.dialog.cancelButton],
-		onShow: function() {
+		onLoad: function() {
 			NS.dialog = this;
+
+			hideThesaurusTab();
+			hideGrammTab();
+			showSpellTab();
+		},
+		onShow: function() {
+			editor.lockSelection(editor.getSelection());
+			
 			NS.TextAreaNumber = 'cke_textarea_' + CKEDITOR.currentInstance.name;
 			appTools.postMessage.init(handlerIncomingData);
 			NS.dataTemp = CKEDITOR.currentInstance.getData();
