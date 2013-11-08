@@ -247,37 +247,6 @@
 		iframe.style.height = '240px';
 	};
 
-	/*NS.sendData = function() {
-		var currentTab = NS.dialog._.currentTabId,
-			that = NS.dialog._.contents[currentTab].Content,
-			tabID, iframe;
-
-		NS.setIframe(that, currentTab);
-		NS.dialog.parts.tabs.removeAllListeners();
-
-		NS.dialog.parts.tabs.on('click', function(event) {
-			event = event || window.event;
-			if (!event.data.getTarget().is('a')) {
-				return
-			};
-
-			if (currentTab == NS.dialog._.currentTabId) { return };
-
-			currentTab = NS.dialog._.currentTabId;
-			that = NS.dialog._.contents[currentTab].Content;
-			tabID = NS.iframeNumber + '_' + currentTab;
-
-			if (that.getElement().$.children.length == 0) {
-				NS.setIframe(that, currentTab);
-				iframe = document.getElementById(tabID);
-				NS.targetFromFrame[tabID] = iframe.contentWindow;
-			} else {
-				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
-			};
-		});
-
-	};*/
-
 	NS.sendData = function(scope) {
 		var currentTab = scope._.currentTabId,
 			that = scope._.contents[currentTab].Content,
