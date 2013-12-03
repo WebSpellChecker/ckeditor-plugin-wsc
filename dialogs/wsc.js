@@ -799,6 +799,11 @@
 			hideThesaurusTab();
 			hideGrammTab();
 			showSpellTab();
+		},
+		"rtl"    : function() {
+			hideThesaurusTab();
+			hideGrammTab();
+			showSpellTab();
 		}
 	};
 
