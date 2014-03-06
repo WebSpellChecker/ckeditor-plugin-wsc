@@ -1,11 +1,8 @@
 ﻿/**
- * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 
-/**
- * @fileOverview Spell checker.
- */
 CKEDITOR.config.wsc_removeGlobalVariable = true;
 
 // Register a plugin named "wsc".
@@ -25,11 +22,11 @@ CKEDITOR.plugins.add( 'wsc', {
 		editor.config.wsc_customLoaderScript = editor.config.wsc_customLoaderScript || CKEDITOR.config.wsc_customLoaderScript;
 
 		CKEDITOR.config.wsc_cmd = editor.config.wsc_cmd || CKEDITOR.config.wsc_cmd || 'spell'; // spell, thes or grammar. default tab
-		CKEDITOR.config.wsc_version="v4.3.0-1e748a6";
+		CKEDITOR.config.wsc_version = CKEDITOR.version + " | " + '%Rev%';
 	},
 	init: function( editor ) {
 		var commandName = 'checkspell';
-		
+
 		var strNormalDialog = 'dialogs/wsc.js',
 			strIeDialog = 'dialogs/wsc_ie.js',
 			strDialog,
@@ -37,7 +34,7 @@ CKEDITOR.plugins.add( 'wsc', {
 		self.parseConfig(editor);
 		self.parseApi(editor);
 		var command = editor.addCommand( commandName, new CKEDITOR.dialogCommand( commandName ) );
-		
+
 		// SpellChecker doesn't work in Opera and with custom domain
 		command.modes = { wysiwyg: ( !CKEDITOR.env.opera && !CKEDITOR.env.air && document.domain == window.location.hostname ) };
 
@@ -50,7 +47,7 @@ CKEDITOR.plugins.add( 'wsc', {
 		}
 
 
-		if ( CKEDITOR.env.ie && CKEDITOR.env.version <= 8 ){
+		if ( CKEDITOR.env.ie && CKEDITOR.env.version <= 7 ){
 			strDialog = strIeDialog;
 		} else {
 			if (!window.postMessage) {

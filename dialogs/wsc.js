@@ -1,15 +1,25 @@
 /**
- * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
  (function() {
-  // Create support tools 
+  // Create support tools
  var appTools = (function(){
+ 	var inited = {};
+
  	var _init = function(handler) {
-		if (document.addEventListener) {
+		if (window.addEventListener) {
 			window.addEventListener('message', handler, false);
 		} else {
 			window.attachEvent("onmessage", handler);
+		}
+	};
+
+	var unbindHandler = function(handler) {
+		if (window.removeEventListener) {
+			window.removeEventListener('message', handler, false);
+		} else {
+			window.detachEvent('onmessage', handler);
 		}
 	};
 
@@ -24,7 +34,7 @@
 				'id': id
 			};
 
-		if (type.call(o.message) == objObject) {
+		if (o.message && type.call(o.message) == objObject) {
 			(o.message.id) ? o.message.id : o.message.id = id;
 			message = o.message;
 		}
@@ -85,15 +95,16 @@
 	return {
 		postMessage: {
 			init: _init,
-			send: _sendCmd
+			send: _sendCmd,
+			unbindHandler: unbindHandler
 		},
 		hash: {
 			create: function() {
-				
+
 			},
 
 			parse: function() {
-				
+
 			}
 		},
 		cookie: {
@@ -210,14 +221,141 @@
 	var nameNode, selectNode, frameId;
 
 	NS.framesetHtml = function(tab) {
-		var str = '<iframe src="' + NS.templatePath + '" id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>';
+		var str = '<iframe id=' + NS.iframeNumber + '_' + tab + ' frameborder="0" allowtransparency="1" style="width:100%;border: 1px solid #AEB3B9;overflow: auto;background:#fff; border-radius: 3px;"></iframe>';
 		return str;
 	};
 
 	NS.setIframe = function(that, nameTab) {
-		var str = NS.framesetHtml(nameTab),
-			iframeId = NS.iframeNumber + nameTab;
-		return that.getElement().setHtml(str);
+		var iframe,
+			str = NS.framesetHtml(nameTab),
+			iframeId = NS.iframeNumber + '_' + nameTab,
+			// tmp.html from wsc/dialogs
+			iframeInnerHtml =
+				'<!DOCTYPE html>' +
+				'<html>' +
+					'<head>' +
+						'<meta charset="UTF-8">' +
+						'<title>iframe</title>' +
+
+						'<style>' +
+							'html,body{' +
+								'margin: 0;' +
+								'height: 100%;' +
+								'font: 13px/1.555 "Trebuchet MS", sans-serif;' +
+							'}' +
+							'a{' +
+							    'color: #888;' +
+							    'font-weight: bold;' +
+							    'text-decoration: none;' +
+							    'border-bottom: 1px solid #888;' +
+							'}' +
+							'.main-box {' +
+								'color:#252525;' +
+								'padding: 3px 5px;' +
+								'text-align: justify;' +
+							'}' +
+							'.main-box p{margin: 0 0 14px;}' +
+							'.main-box .cerr{' +
+							    'color: #f00000;' +
+							    'border-bottom-color: #f00000;' +
+							'}' +
+						'</style>' +
+					'</head>' +
+					'<body>' +
+						'<div id="content" class="main-box"></div>' +
+						'<iframe src="" frameborder="0" id="spelltext" name="spelltext" style="display:none; width: 100%" ></iframe>' +
+						'<iframe src="" frameborder="0" id="loadsuggestfirst" name="loadsuggestfirst" style="display:none; width: 100%" ></iframe>' +
+						'<iframe src="" frameborder="0" id="loadspellsuggestall" name="loadspellsuggestall" style="display:none; width: 100%" ></iframe>' +
+						'<iframe src="" frameborder="0" id="loadOptionsForm" name="loadOptionsForm" style="display:none; width: 100%" ></iframe>' +
+						'<script>' +
+							'(function(window) {' +
+								// Constructor Manager PostMessage
+
+								'var ManagerPostMessage = function() {' +
+									'var _init = function(handler) {' +
+										'if (document.addEventListener) {' +
+											'window.addEventListener("message", handler, false);' +
+										'} else {' +
+											'window.attachEvent("onmessage", handler);' +
+										'};' +
+									'};' +
+									'var _sendCmd = function(o) {' +
+										'var str,' +
+											'type = Object.prototype.toString,' +
+											'fn = o.fn || null,' +
+											'id = o.id || "",' +
+											'target = o.target || window,' +
+											'message = o.message || { "id": id };' +
+
+										'if (o.message && type.call(o.message) == "[object Object]") {' +
+											'(o.message["id"]) ? o.message["id"] : o.message["id"] = id;' +
+											'message = o.message;' +
+										'};' +
+
+										'str = JSON.stringify(message, fn);' +
+										'target.postMessage(str, "*");' +
+									'};' +
+
+									'return {' +
+										'init: _init,' +
+										'send: _sendCmd' +
+									'};' +
+								'};' +
+
+								'var manageMessageTmp = new ManagerPostMessage;' +
+
+
+								'var appString = (function(){' +
+									'var spell = parent.CKEDITOR.config.wsc.DefaultParams.scriptPath;' +
+									'var serverUrl = parent.CKEDITOR.config.wsc.DefaultParams.serviceHost;' +
+									'return serverUrl + spell;' +
+								'})();' +
+
+								'function loadScript(src, callback) {' +
+								    'var scriptTag = document.createElement("script");' +
+								   		'scriptTag.type = "text/javascript";' +
+								   	'callback ? callback : callback = function() {};' +
+								    'if(scriptTag.readyState) {' +
+								        //IE
+								        'scriptTag.onreadystatechange = function() {' +
+								            'if (scriptTag.readyState == "loaded" ||' +
+								            'scriptTag.readyState == "complete") {' +
+								                'scriptTag.onreadystatechange = null;' +
+								                'setTimeout(function(){scriptTag.parentNode.removeChild(scriptTag)},1);' +
+								                'callback();' +
+								            '}' +
+								        '};' +
+								    '}else{' +
+								        //Others
+								        'scriptTag.onload = function() {' +
+								           'setTimeout(function(){scriptTag.parentNode.removeChild(scriptTag)},1);' +
+								           'callback();' +
+								        '};' +
+								    '};' +
+								    'scriptTag.src = src;' +
+								    'document.getElementsByTagName("head")[0].appendChild(scriptTag);' +
+								'};' +
+
+
+								'window.onload = function(){' +
+									 'loadScript(appString, function(){' +
+										'manageMessageTmp.send({' +
+											'"id": "iframeOnload",' +
+											'"target": window.parent' +
+										'});' +
+									'});' +
+								'}' +
+							'})(this);' +
+						'</script>' +
+					'</body>' +
+				'</html>';
+
+		that.getElement().setHtml(str);
+		iframe = document.getElementById(iframeId);
+		iframe = (iframe.contentWindow) ? iframe.contentWindow : (iframe.contentDocument.document) ? iframe.contentDocument.document : iframe.contentDocument;
+		iframe.document.open();
+		iframe.document.write(iframeInnerHtml);
+		iframe.document.close();
 	};
 
 	NS.setCurrentIframe = function(currentTab) {
@@ -247,15 +385,46 @@
 		iframe.style.height = '240px';
 	};
 
+	/*NS.sendData = function() {
+		var currentTab = NS.dialog._.currentTabId,
+			that = NS.dialog._.contents[currentTab].Content,
+			tabID, iframe;
+
+		NS.setIframe(that, currentTab);
+		NS.dialog.parts.tabs.removeAllListeners();
+
+		NS.dialog.parts.tabs.on('click', function(event) {
+			event = event || window.event;
+			if (!event.data.getTarget().is('a')) {
+				return
+			};
+
+			if (currentTab == NS.dialog._.currentTabId) { return };
+
+			currentTab = NS.dialog._.currentTabId;
+			that = NS.dialog._.contents[currentTab].Content;
+			tabID = NS.iframeNumber + '_' + currentTab;
+
+			if (that.getElement().$.children.length == 0) {
+				NS.setIframe(that, currentTab);
+				iframe = document.getElementById(tabID);
+				NS.targetFromFrame[tabID] = iframe.contentWindow;
+			} else {
+				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
+			};
+		});
+
+	};*/
+
 	NS.sendData = function(scope) {
 		var currentTab = scope._.currentTabId,
 			that = scope._.contents[currentTab].Content,
 			tabID, iframe;
 
-			
+
 		NS.setIframe(that, currentTab);
 		scope.parts.tabs.removeAllListeners();
-		
+
 		scope.parts.tabs.on('click', function(event) {
 			event = event || window.event;
 
@@ -603,7 +772,7 @@
 
 			var command = NS.dialog.getParentEditor().getCommand( 'checkspell' ),
 				editor = NS.dialog.getParentEditor();
-			
+
 			editor.focus();
 
 			editor.setData(response.text, function(){
@@ -612,7 +781,7 @@
 				editor.fire('saveSnapshot');
 				NS.dialog.hide();
 			});
-		
+
 		},
 		ReplaceText: function(response) {
 			delete response.id;
@@ -934,7 +1103,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			frameId = NS.iframeNumber + '_' + currentTabId,
 			new_word = NS.textNode[currentTabId].getValue(),
 			cmd = this.getElement().getAttribute("title-cmd");
-	
+
 
 		appTools.postMessage.send({
 			'message': {
@@ -955,8 +1124,8 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		}
 
 	};
-	
-	var oneLoadFunction = null;	
+
+	var oneLoadFunction = null;
 
  return {
 		title: editor.config.wsc_dialogTitle || editor.lang.wsc.title,
@@ -972,7 +1141,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		},
 		onShow: function() {
 			editor.lockSelection(editor.getSelection());
-			
+
 			NS.TextAreaNumber = 'cke_textarea_' + CKEDITOR.currentInstance.name;
 			appTools.postMessage.init(handlerIncomingData);
 			NS.dataTemp = CKEDITOR.currentInstance.getData();
@@ -1018,7 +1187,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 					target: NS.OverlayPlace
 
 				});
-			
+
 				var number_ck = NS.dialog.parts.tabs.getId(),
 					dialogPartsTab = CKEDITOR.document.getById(number_ck);
 
@@ -1045,6 +1214,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 		},
 		onHide: function() {
 			NS.dataTemp = '';
+			appTools.postMessage.unbindHandler(handlerIncomingData);
 		},
 		contents: [
 			{
@@ -1064,10 +1234,10 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						id: 'Content',
 						label: 'spellContent',
 						html: '',
-						setup: function(dialog) {// debugger;	
+						setup: function(dialog) {// debugger;
 							var tabId = NS.iframeNumber + '_' + dialog._.currentTabId;
 							var iframe = document.getElementById(tabId);
-							NS.targetFromFrame[tabId] = iframe.contentWindow; 
+							NS.targetFromFrame[tabId] = iframe.contentWindow;
 						}
 					},
 					{
@@ -2068,7 +2238,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 		},
 		onLoad: function() {
 			dialog = this;
-			appTools.postMessage.init(cameOptions);
+			// appTools.postMessage.init(cameOptions);
 
 			linkOnCheckbox['IgnoreAllCapsWords'] = dialog.getContentElement('OptionsTab', 'IgnoreAllCapsWords');
 			linkOnCheckbox['IgnoreWordsNumbers'] = dialog.getContentElement('OptionsTab', 'IgnoreWordsNumbers');
@@ -2077,6 +2247,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 
 		},
 		onShow: function() {
+			appTools.postMessage.init(cameOptions);
 			setHandlerOptions();
 
 			(!parseInt(checkboxState['IgnoreAllCapsWords'], 10)) ? linkOnCheckbox['IgnoreAllCapsWords'].setValue('', false) : linkOnCheckbox['IgnoreAllCapsWords'].setValue('checked', false);
@@ -2093,6 +2264,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 			linkOnCheckbox['IgnoreWordsNumbers'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreWordsWithNumbers'];
 			linkOnCheckbox['IgnoreMixedCaseWords'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreMixedCaseWords'];
 			linkOnCheckbox['IgnoreDomainNames'].getElement().$.lastChild.innerHTML = NS.LocalizationComing['IgnoreDomainNames'];
+		},
+		onHide: function() {
+			appTools.postMessage.unbindHandler(cameOptions);
 		}
 	};
 });
@@ -2116,7 +2290,7 @@ CKEDITOR.dialog.on( 'resize', function( evt ) {
 
 CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
     var dialogDefinition = dialogDefinitionEvent.data.definition;
- 
+
     NS.onLoadOverlay = new overlayBlock({
 		opacity: "1",
 		background: "#fff",
