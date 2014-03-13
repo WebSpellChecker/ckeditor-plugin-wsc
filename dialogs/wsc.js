@@ -423,9 +423,8 @@
 
 
 		NS.setIframe(that, currentTab);
-		scope.parts.tabs.removeAllListeners();
 
-		scope.parts.tabs.on('click', function(event) {
+		var loadNewTab = function(event) {
 			event = event || window.event;
 
 			if (!event.data.getTarget().is('a')) {
@@ -446,7 +445,10 @@
 			} else {
 				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
 			}
-		});
+		};
+
+		scope.parts.tabs.removeListener('click', loadNewTab);
+		scope.parts.tabs.on('click', loadNewTab);
 	};
 
 	NS.buildSelectLang = function(aId) {
