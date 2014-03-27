@@ -775,7 +775,9 @@
 			var command = NS.dialog.getParentEditor().getCommand( 'checkspell' ),
 				editor = NS.dialog.getParentEditor();
 
-			editor.focus();
+			try {
+				editor.focus();
+			} catch(e) {}
 
 			editor.setData(response.text, function(){
 				NS.dataTemp = '';
