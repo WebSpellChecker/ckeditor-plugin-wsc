@@ -41,7 +41,18 @@ CKEDITOR.plugins.add( 'wsc', {
 		if(typeof editor.plugins.scayt == 'undefined'){
 			editor.ui.addButton && editor.ui.addButton( 'SpellChecker', {
 				label: editor.lang.wsc.toolbar,
-				command: commandName,
+				click: function(editor) {
+					var inlineMode = (editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE),
+						text = inlineMode ? editor.container.getText() : editor.document.getBody().getText();
+
+					text = text.replace(/\s/g, '');
+
+					if(text) {
+						editor.execCommand('checkspell');
+					} else {
+						alert('Nothing to check!');
+					}
+				},
 				toolbar: 'spellchecker,10'
 			});
 		}

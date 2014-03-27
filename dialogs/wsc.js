@@ -55,7 +55,7 @@
 	};
 
 	var setCookie = function(name, value, options) {
-	  options = options || {};
+	options = options || {};
 
 	  var expires = options.expires;
 
@@ -793,7 +793,9 @@
 			NS.selectingLang = response.currentLang;
 
 			window.setTimeout(function() {
-				NS.div_overlay.setDisable();
+				try {
+					NS.div_overlay.setDisable();
+				} catch(e) {}
 			}, 500);
 
 			SetLocalizationButton(NS.LocalizationButton);
@@ -1022,19 +1024,35 @@
 	};
 
 	var showCurrentTabs = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().show();
+		var target = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement();
+
+		target.removeStyle('display');
+		target.removeStyle('position');
+		target.removeStyle('left');
 	};
 
 	var hideCurrentTabs = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().hide();
+		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().setStyles({
+			display: 'block',
+			position: 'absolute',
+			left: '-9999px'
+		});
 	};
 
 	var showCurrentFinishChecking = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().show();
+		var target = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement();
+
+		target.removeStyle('display');
+		target.removeStyle('position');
+		target.removeStyle('left');
 	};
 
 	var hideCurrentFinishChecking = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().hide();
+		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().setStyles({
+			display: 'block',
+			position: 'absolute',
+			left: '-9999px'
+		});
 	};
 
 
@@ -1291,7 +1309,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 																label: NS.LocalizationLabel['Suggestions'].text + ':',
 																onShow: function() {
 																	NS.LocalizationLabel['Suggestions'].instance = this;
-																	this.getInputElement().hide();
+																	this.getInputElement().setStyles({
+																		display: 'block',
+																		position: 'absolute',
+																		left: '-9999px'
+																	});
 																}
 															},
 						 									{
@@ -1452,7 +1474,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				style: 'width:560px; margin: 0 auto;',
 				widths: ['70%', '30%'],
 				onShow: function() {
-					this.getElement().hide();
+					this.getElement().setStyles({
+						display: 'block',
+						position: 'absolute',
+						left: '-9999px'
+					});
 				},
 				onHide: showCurrentTabs,
 				children: [
@@ -1658,7 +1684,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						style: 'width:560px; margin: 0 auto;',
 						widths: ['70%', '30%'],
 						onShow: function() {
-							this.getElement().hide();
+							this.getElement().setStyles({
+								display: 'block',
+								position: 'absolute',
+								left: '-9999px'
+							});
 						},
 						onHide: showCurrentTabs,
 						children: [
@@ -1867,7 +1897,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						style: 'width:560px; margin: 0 auto;',
 						widths: ['70%', '30%'],
 						onShow: function() {
-							this.getElement().hide();
+							this.getElement().setStyles({
+								display: 'block',
+								position: 'absolute',
+								left: '-9999px'
+							});
 						},
 						children: [
 							{
