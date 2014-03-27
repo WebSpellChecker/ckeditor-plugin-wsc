@@ -196,9 +196,12 @@
 		};
 
 	var SetLocalizationButton = function(obj) {
+		var el;
 
 		for(var i in obj) {
-			obj[i].instance.getElement().setText(NS.LocalizationComing[i]);
+			el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
+
+			el.setText(NS.LocalizationComing[i]);
 		}
 	};
 
@@ -2188,7 +2191,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 														this.getElement().setAttribute("title-cmd", this.id);
 													},
 													onShow: function() {
-														this.getElement().setText(NS.LocalizationComing['Create']);
+														var el = this.getElement().getFirst() || this.getElement();
+
+														el.setText(NS.LocalizationComing['Create']);
 													},
 													onClick: sendDicOptions
 												},
@@ -2202,7 +2207,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 														this.getElement().setAttribute("title-cmd", this.id);
 													},
 													onShow: function() {
-														this.getElement().setText(NS.LocalizationComing['Restore']);
+														var el = this.getElement().getFirst() || this.getElement();
+
+														el.setText(NS.LocalizationComing['Restore']);
 													},
 													onClick: sendDicOptions
 												}
@@ -2223,7 +2230,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 														this.getElement().setAttribute("title-cmd", this.id);
 													},
 													onShow: function() {
-														this.getElement().setText(NS.LocalizationComing['Rename']);
+														var el = this.getElement().getFirst() || this.getElement();
+
+														el.setText(NS.LocalizationComing['Rename']);
 													},
 													onClick: sendDicOptions
 												},
@@ -2237,7 +2246,9 @@ CKEDITOR.dialog.add('options', function(editor) {
 														this.getElement().setAttribute("title-cmd", this.id);
 													},
 													onShow: function() {
-														this.getElement().setText(NS.LocalizationComing['Remove']);
+														var el = this.getElement().getFirst() || this.getElement();
+
+														el.setText(NS.LocalizationComing['Remove']);
 													},
 													onClick: sendDicOptions
 												}
