@@ -1463,6 +1463,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													if (document.location.protocol == "file:") {
 														alert('WSC: Options functionality is disabled when runing from file system');
 													} else {
+														activeElement = document.activeElement;
 														editor.openDialog('options');
 													}
 												}
@@ -1538,6 +1539,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											if (document.location.protocol == "file:") {
 												alert('WSC: Options functionality is disabled when runing from file system');
 											} else {
+												activeElement = document.activeElement;
 												editor.openDialog('options');
 											}
 										}
@@ -1967,6 +1969,8 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 	};
 });
 
+var activeElement = null;
+
 // Options dialog
 CKEDITOR.dialog.add('options', function(editor) {
 	var dialog = null;
@@ -2316,6 +2320,7 @@ CKEDITOR.dialog.add('options', function(editor) {
 		},
 		onHide: function() {
 			appTools.postMessage.unbindHandler(cameOptions);
+			activeElement.focus();
 		}
 	};
 });
