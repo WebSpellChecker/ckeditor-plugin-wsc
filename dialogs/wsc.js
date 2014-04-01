@@ -196,16 +196,12 @@
 		};
 
 	var SetLocalizationButton = function(obj) {
-		var firstChild;
+		var el;
 
 		for(var i in obj) {
-			firstChild = obj[i].instance.getElement().getFirst();
+			el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
 
-			if(firstChild) {
-				firstChild.setText(NS.LocalizationComing[i]);
-			} else {
-				obj[i].instance.getElement().setText(NS.LocalizationComing[i]);
-			}
+			el.setText(NS.LocalizationComing[i]);
 		}
 	};
 
