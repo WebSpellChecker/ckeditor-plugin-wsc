@@ -55,7 +55,7 @@
 	};
 
 	var setCookie = function(name, value, options) {
-	options = options || {};
+	  options = options || {};
 
 	  var expires = options.expires;
 
@@ -1347,6 +1347,15 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 		},
 		onHide: function() {
+			var scaytPlugin = CKEDITOR.plugins.scayt,
+				scaytInstance = editor.scayt;
+
+			editor.unlockSelection();
+
+			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name]) {
+				scaytInstance.setMarkupPaused(false);
+			}
+
 			NS.dataTemp = '';
 			appTools.postMessage.unbindHandler(handlerIncomingData);
 		},
