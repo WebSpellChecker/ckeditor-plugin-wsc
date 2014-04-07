@@ -2343,21 +2343,24 @@ CKEDITOR.dialog.on( 'resize', function( evt ) {
 });
 
 CKEDITOR.on('dialogDefinition', function(dialogDefinitionEvent) {
-    var dialogDefinition = dialogDefinitionEvent.data.definition;
 
-    NS.onLoadOverlay = new overlayBlock({
-		opacity: "1",
-		background: "#fff",
-		target: dialogDefinition.dialog.parts.tabs.getParent().$
-	});
-	NS.onLoadOverlay.setEnable();
-	dialogDefinition.dialog.on('show', function(event) {
-		//NS.div_overlay.setEnable();
-	});
-    dialogDefinition.dialog.on('cancel', function(cancelEvent) {
-    		dialogDefinition.dialog.getParentEditor().config.wsc_onClose.call(this.document.getWindow().getFrame());
+    if(dialogDefinitionEvent.data.name === 'checkspell') {
+		var dialogDefinition = dialogDefinitionEvent.data.definition;
+
+		 NS.onLoadOverlay = new overlayBlock({
+			opacity: "1",
+			background: "#fff",
+			target: dialogDefinition.dialog.parts.tabs.getParent().$
+		});
+
+		NS.onLoadOverlay.setEnable();
+
+		dialogDefinition.dialog.on('cancel', function(cancelEvent) {
+			dialogDefinition.dialog.getParentEditor().config.wsc_onClose.call(this.document.getWindow().getFrame());
     		NS.div_overlay.setDisable();
-    	return false;
-    }, this, null, -1);
+    		NS.onLoadOverlay.setDisable();
+			return false;
+		}, this, null, -1);
+	}
 });
 })();
