@@ -92,6 +92,39 @@
 	  setCookie(name, "", { expires: -1 });
 	};
 
+	var findFocusable = function(ckEl) {
+		var result = null,
+			focusableSelectors = 'a[href], area[href], input, select, textarea, button, *[tabindex], *[contenteditable]';
+
+		if(ckEl) {
+			result = ckEl.find(focusableSelectors);
+		}
+
+		return result;
+	};
+
+	var getStyle = function(el, prop) {
+		if(document.defaultView && document.defaultView.getComputedStyle) {
+			return document.defaultView.getComputedStyle(el, null)[prop];
+		} else if(el.currentStyle) {
+			return el.currentStyle[prop];
+		} else {
+			return el.style[prop];
+		}
+	};
+
+	var isHidden = function(el) {
+		return el.offsetWidth === 0 || el.offsetHeight == 0 || getStyle(el, 'display') === 'none';
+	};
+
+	var isVisible = function(el) {
+		return !isHidden(el);
+	};
+
+	var hasClass = function (obj, cname) {
+		return !!(obj.className ? obj.className.match(new RegExp('(\\s|^)'+cname+'(\\s|$)')) : false);
+	};
+
 	return {
 		postMessage: {
 			init: _init,
@@ -111,6 +144,11 @@
 			set: setCookie,
 			get: getCookie,
 			remove: deleteCookie
+		},
+		misc: {
+			findFocusable: findFocusable,
+			isVisible: isVisible,
+			hasClass: hasClass
 		}
 	};
  })();
@@ -1034,14 +1072,48 @@
 		target.removeStyle('display');
 		target.removeStyle('position');
 		target.removeStyle('left');
+
+		target.show();
 	};
 
 	var hideCurrentTabs = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement().setStyles({
+		var target = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'bottomGroup').getElement(),
+			activeElement = document.activeElement,
+			focusableElements;
+
+		target.setStyles({
 			display: 'block',
 			position: 'absolute',
 			left: '-9999px'
 		});
+
+		setTimeout(function() {
+			target.removeStyle('display');
+			target.removeStyle('position');
+			target.removeStyle('left');
+
+			target.hide();
+
+			NS.dialog._.editor.focusManager.currentActive.focusNext();
+
+			focusableElements = appTools.misc.findFocusable(NS.dialog.parts.contents);
+			if(!appTools.misc.hasClass(activeElement, 'cke_dialog_tab') && !appTools.misc.hasClass(activeElement, 'cke_dialog_contents_body') && appTools.misc.isVisible(activeElement)) {
+				try {
+					activeElement.focus();
+				} catch(e) {}
+			} else {
+				for(var i = 0, tmpCkEl; i < focusableElements.count(); i++) {
+					tmpCkEl = focusableElements.getItem(i);
+					if(appTools.misc.isVisible(tmpCkEl.$)) {
+						try {
+							tmpCkEl.$.focus();
+						} catch(e) {}
+
+						break;
+					}
+				}
+			}
+		}, 0);
 	};
 
 	var showCurrentFinishChecking = function() {
@@ -1050,14 +1122,48 @@
 		target.removeStyle('display');
 		target.removeStyle('position');
 		target.removeStyle('left');
+
+		target.show();
 	};
 
 	var hideCurrentFinishChecking = function() {
-		NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement().setStyles({
+		var target = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'BlockFinishChecking').getElement(),
+			activeElement = document.activeElement,
+			focusableElements;
+
+		target.setStyles({
 			display: 'block',
 			position: 'absolute',
 			left: '-9999px'
 		});
+
+		setTimeout(function() {
+			target.removeStyle('display');
+			target.removeStyle('position');
+			target.removeStyle('left');
+
+			target.hide();
+
+			NS.dialog._.editor.focusManager.currentActive.focusNext();
+
+			focusableElements = appTools.misc.findFocusable(NS.dialog.parts.contents);
+			if(!appTools.misc.hasClass(activeElement, 'cke_dialog_tab') && !appTools.misc.hasClass(activeElement, 'cke_dialog_contents_body') && appTools.misc.isVisible(activeElement)) {
+				try {
+					activeElement.focus();
+				} catch(e) {}
+			} else {
+				for(var i = 0, tmpCkEl; i < focusableElements.count(); i++) {
+					tmpCkEl = focusableElements.getItem(i);
+					if(appTools.misc.isVisible(tmpCkEl.$)) {
+						try {
+							tmpCkEl.$.focus();
+						} catch(e) {}
+
+						break;
+					}
+				}
+			}
+		}, 0);
 	};
 
 
@@ -1122,6 +1228,9 @@ function __constructLangSelectbox(languageGroup) {
 CKEDITOR.dialog.add('checkspell', function(editor) {
 	var handlerButtons = function(event) {
 		event = event || window.event;
+
+		// because in chrome and safary document.activeElement returns <body> tag. We need to signal that clicked element is active
+		this.getElement().focus();
 
 		NS.div_overlay.setEnable();
 		var currentTabId = NS.dialog._.currentTabId,
@@ -1460,6 +1569,9 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													}
 												},
 												onClick: function() {
+													// because in chrome and safary document.activeElement returns <body> tag. We need to signal that clicked element is active
+													this.getElement().focus();
+
 													if (document.location.protocol == "file:") {
 														alert('WSC: Options functionality is disabled when runing from file system');
 													} else {
@@ -1536,6 +1648,9 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											}
 										},
 										onClick: function() {
+											// because in chrome and safary document.activeElement returns <body> tag. We need to signal that clicked element is active
+											this.getElement().focus();
+
 											if (document.location.protocol == "file:") {
 												alert('WSC: Options functionality is disabled when runing from file system');
 											} else {
@@ -2320,7 +2435,11 @@ CKEDITOR.dialog.add('options', function(editor) {
 		},
 		onHide: function() {
 			appTools.postMessage.unbindHandler(cameOptions);
-			activeElement.focus();
+			if(activeElement) {
+				try {
+					activeElement.focus();
+				} catch(e) {}
+			}
 		}
 	};
 });
