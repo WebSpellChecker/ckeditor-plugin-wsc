@@ -1352,7 +1352,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 			editor.unlockSelection();
 
-			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name]) {
+			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name] && scaytInstance.setMarkupPaused) {
 				scaytInstance.setMarkupPaused(false);
 			}
 
