@@ -30,13 +30,15 @@ CKEDITOR.plugins.add( 'wsc', {
 		var strNormalDialog = 'dialogs/wsc.js',
 			strIeDialog = 'dialogs/wsc_ie.js',
 			strDialog,
-			self = this;
+			self = this,
+			env = CKEDITOR.env;
 		self.parseConfig(editor);
 		self.parseApi(editor);
 		var command = editor.addCommand( commandName, new CKEDITOR.dialogCommand( commandName ) );
 
-		// SpellChecker doesn't work in Opera and with custom domain
-		command.modes = { wysiwyg: ( !CKEDITOR.env.opera && !CKEDITOR.env.air && document.domain == window.location.hostname ) };
+		// SpellChecker doesn't work in Opera, with custom domain, IE Compatibility Mode and IE (8 & 9) Quirks Mode
+		command.modes = { wysiwyg: ( !CKEDITOR.env.opera && !CKEDITOR.env.air && document.domain == window.location.hostname &&
+			!( env.ie && ( env.version < 8 || env.quirks ) ) ) };
 
 		if(typeof editor.plugins.scayt == 'undefined'){
 			editor.ui.addButton && editor.ui.addButton( 'SpellChecker', {
