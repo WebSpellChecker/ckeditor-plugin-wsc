@@ -1433,9 +1433,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 																onShow: function() {
 																	NS.LocalizationLabel['Suggestions'].instance = this;
 																	this.getInputElement().setStyles({
-																		display: 'block',
-																		position: 'absolute',
-																		left: '-9999px'
+																		display: 'none'
 																	});
 																}
 															},
