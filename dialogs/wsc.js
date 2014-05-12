@@ -426,37 +426,6 @@
 		iframe.style.height = '240px';
 	};
 
-	/*NS.sendData = function() {
-		var currentTab = NS.dialog._.currentTabId,
-			that = NS.dialog._.contents[currentTab].Content,
-			tabID, iframe;
-
-		NS.setIframe(that, currentTab);
-		NS.dialog.parts.tabs.removeAllListeners();
-
-		NS.dialog.parts.tabs.on('click', function(event) {
-			event = event || window.event;
-			if (!event.data.getTarget().is('a')) {
-				return
-			};
-
-			if (currentTab == NS.dialog._.currentTabId) { return };
-
-			currentTab = NS.dialog._.currentTabId;
-			that = NS.dialog._.contents[currentTab].Content;
-			tabID = NS.iframeNumber + '_' + currentTab;
-
-			if (that.getElement().$.children.length == 0) {
-				NS.setIframe(that, currentTab);
-				iframe = document.getElementById(tabID);
-				NS.targetFromFrame[tabID] = iframe.contentWindow;
-			} else {
-				sendData(NS.targetFromFrame[tabID], NS.cmd[currentTab]);
-			};
-		});
-
-	};*/
-
 	NS.sendData = function(scope) {
 		var currentTab = scope._.currentTabId,
 			that = scope._.contents[currentTab].Content,
@@ -553,10 +522,17 @@
 
 	NS.buildOptionSynonyms = function(key) {
 		var syn = NS.selectNodeResponce[key];
+
+		var select = getSelect( NS.selectNode['synonyms'] );
+
 		NS.selectNode['synonyms'].clear();
 
-		for (var item = 0; item < syn.length; item++) {
-			NS.selectNode['synonyms'].add(syn[item], syn[item]);
+		for (var i = 0; i < syn.length; i++) {
+			var option = document.createElement('option');
+				option.text = syn[i];
+				option.value = syn[i];
+
+			select.$.add(option, i);
 		}
 
 		NS.selectNode['synonyms'].getInputElement().$.firstChild.selected = true;
@@ -717,6 +693,14 @@
 		}
 	};
 
+	function getSelect( obj ) {
+		if ( obj && obj.domId && obj.getInputElement().$ )
+		return obj.getInputElement();
+		else if ( obj && obj.$ )
+			return obj;
+		return false;
+	}
+
 	var handlerId = {
 		iframeOnload: function(response) {
 			NS.div_overlay.setEnable();
@@ -741,11 +725,19 @@
 
 			word = word.split(',');
 			suggestionsList = word;
-			selectNode.clear();
+
 			NS.textNode['SpellTab'].setValue(suggestionsList[0]);
 
-			for (var item = 0; item < suggestionsList.length; item++) {
-				selectNode.add(suggestionsList[item], suggestionsList[item]);
+			var select = getSelect( selectNode );
+
+			selectNode.clear();
+
+			for (var i = 0; i < suggestionsList.length; i++) {
+				var option = document.createElement('option');
+					option.text = suggestionsList[i];
+					option.value = suggestionsList[i];
+
+				select.$.add(option, i);
 			}
 
 			showCurrentTabs();
@@ -790,10 +782,20 @@
 			NS.selectNodeResponce = response;
 
 			NS.textNode['Thesaurus'].reset();
+
+			var select = getSelect( NS.selectNode['categories'] ),
+				count = 0;
+
 			NS.selectNode['categories'].clear();
 
 			for (var i in response) {
-				NS.selectNode['categories'].add(i, i);
+
+				var option = document.createElement('option');
+					option.text = i;
+					option.value = i;
+
+				select.$.add(option, count);
+				count++
 			}
 
 			var synKey = NS.selectNode['categories'].getInputElement().getChildren().$[0].value;
@@ -802,6 +804,7 @@
 
 			showCurrentTabs();
 			NS.div_overlay.setDisable();
+			count = 0;
 		},
 		finish: function(response) {
 			delete response.id;
@@ -1460,9 +1463,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 														onShow: function() {
 															selectNode = this;
 														},
-														onHide: function() {
-															this.clear();
-														},
 														onChange: function() {
 															NS.textNode['SpellTab'].setValue(this.getValue());
 														}
@@ -1956,9 +1956,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 														onShow: function() {
 															NS.selectNode['categories'] = this;
 														},
-														onHide: function() {
-															this.clear();
-														},
 														onChange: function() {
 															NS.buildOptionSynonyms(this.getValue());
 														}
@@ -1974,9 +1971,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 														onShow: function() {
 															NS.selectNode['synonyms'] = this;
 															NS.textNode['Thesaurus'].setValue(this.getValue());
-														},
-														onHide: function() {
-															this.clear();
 														},
 														onChange: function(e) {
 															NS.textNode['Thesaurus'].setValue(this.getValue());
