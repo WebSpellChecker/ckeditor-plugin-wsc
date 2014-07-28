@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'ms', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'ms', {
 	notInDic: 'Tidak terdapat didalam kamus',
 	oneChange: 'Pemeriksaan ejaan siap: Satu perkataan telah diubah',
 	progress: 'Pemeriksaan ejaan sedang diproses...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Semak Ejaan'
 });

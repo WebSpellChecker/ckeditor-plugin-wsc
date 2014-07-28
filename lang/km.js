@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'km', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'km', {
 	notInDic: 'គ្មានក្នុងវចនានុក្រម',
 	oneChange: 'ការពិនិត្យអក្ខរាវិរុទ្ធបានចប់: ពាក្យមួយត្រូចបានផ្លាស់ប្តូរ',
 	progress: 'កំពុងពិនិត្យអក្ខរាវិរុទ្ធ...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'ពិនិត្យអក្ខរាវិរុទ្ធ'
 });

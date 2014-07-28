@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'pt', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'pt', {
 	notInDic: 'Não está num directório',
 	oneChange: 'Verificação ortográfica completa: uma palavra alterada',
 	progress: 'Verificação ortográfica em progresso…',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Verificação Ortográfica'
 });

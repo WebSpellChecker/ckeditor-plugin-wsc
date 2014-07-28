@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'ro', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'ro', {
 	notInDic: 'Nu e în dicţionar',
 	oneChange: 'Verificarea textului terminată: Un cuvânt modificat',
 	progress: 'Verificarea textului în desfăşurare...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Verifică scrierea textului'
 });

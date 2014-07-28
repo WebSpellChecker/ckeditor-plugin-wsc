@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'mn', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'mn', {
 	notInDic: 'Толь бичиггүй',
 	oneChange: 'Дүрэм шалгаад дууссан: 1 үг өөрчлөгдсөн',
 	progress: 'Дүрэм шалгаж байгаа үйл явц...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Үгийн дүрэх шалгах'
 });

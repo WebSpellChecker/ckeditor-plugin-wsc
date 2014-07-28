@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'hi', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'hi', {
 	notInDic: 'शब्दकोश में नहीं',
 	oneChange: 'वर्तनी की जाँच : एक शब्द बदला गया',
 	progress: 'वर्तनी की जाँच (स्पॅल-चॅक) जारी है...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'वर्तनी (स्पेलिंग) जाँच'
 });

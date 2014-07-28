@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'bn', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'bn', {
 	notInDic: 'শব্দকোষে নেই',
 	oneChange: 'বানান পরীক্ষা শেষ: একটি মাত্র শব্দ পরিবর্তন করা হয়েছে',
 	progress: 'বানান পরীক্ষা চলছে...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'বানান চেক'
 });

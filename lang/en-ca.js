@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'en-ca', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'en-ca', {
 	notInDic: 'Not in dictionary',
 	oneChange: 'Spell check complete: One word changed',
 	progress: 'Spell check in progress...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Check Spelling'
 });

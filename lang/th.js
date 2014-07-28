@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'th', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'th', {
 	notInDic: 'ไม่พบในดิกชันนารี',
 	oneChange: 'ตรวจสอบคำสะกดเสร็จสิ้น: แก้ไข1คำ',
 	progress: 'กำลังตรวจสอบคำสะกด...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'ตรวจการสะกดคำ'
 });

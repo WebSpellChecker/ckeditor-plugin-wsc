@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang( 'wsc', 'is', {
@@ -19,6 +19,6 @@ CKEDITOR.plugins.setLang( 'wsc', 'is', {
 	notInDic: 'Ekki í orðabókinni',
 	oneChange: 'Villuleit lokið: Einu orði breytt',
 	progress: 'Villuleit í gangi...',
-	title: 'Spell Check',
+	title: 'Spell Checker',
 	toolbar: 'Villuleit'
 });
