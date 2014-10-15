@@ -1009,18 +1009,28 @@
 	};
 
 	var tabView = {
-		"superset" : function() {
+		"superset"		: function() {
 			showThesaurusTab();
 			showGrammTab();
 			showSpellTab();
 		},
-		"usual"    : function() {
+		"usual"			: function() {
 			hideThesaurusTab();
 			hideGrammTab();
 			showSpellTab();
 		},
-		"rtl"    : function() {
+		"rtl"			: function() {
 			hideThesaurusTab();
+			hideGrammTab();
+			showSpellTab();
+		},
+		"spellgrammar"	: function() {
+			hideThesaurusTab();
+			showGrammTab();
+			showSpellTab();
+		},
+		"spellthes"		: function() {
+			showThesaurusTab();
 			hideGrammTab();
 			showSpellTab();
 		}
