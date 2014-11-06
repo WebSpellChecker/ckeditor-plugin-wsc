@@ -182,9 +182,10 @@
 		NS.LocalizationComing = {};
 		NS.OverlayPlace = null;
 		NS.LocalizationButton = {
-			'ChangeTo': {
+			'ChangeTo_button': {
 				'instance' : null,
-				'text' : 'Change to'
+				'text' : 'Change to',
+				'localizationID': 'ChangeTo'
 			},
 
 			'ChangeAll': {
@@ -215,41 +216,73 @@
 				'text' : 'Add word'
 			},
 
-			'FinishChecking': {
+			'FinishChecking_button': {
 				'instance' : null,
-				'text' : 'Finish Checking'
-			}
+				'text' : 'Finish Checking',
+				'localizationID': 'FinishChecking'
+			},
+
+			'FinishChecking_button_block': {
+				'instance' : null,
+				'text' : 'Finish Checking',
+				'localizationID': 'FinishChecking'
+			},
 		};
 
 		NS.LocalizationLabel = {
-			'ChangeTo': {
+			'ChangeTo_label': {
 				'instance' : null,
-				'text' : 'Change to'
+				'text' : 'Change to',
+				'localizationID': 'ChangeTo'
 			},
 
 			'Suggestions': {
 				'instance' : null,
 				'text' : 'Suggestions'
+			},
+
+			'Categories': {
+				'instance' : null,
+				'text' : 'Categories'
+			},
+
+			'Synonyms': {
+				'instance' : null,
+				'text' : 'Synonyms'
 			}
 		};
 
 	var SetLocalizationButton = function(obj) {
-		var el;
+		var el, localizationID;
 
 		for(var i in obj) {
-			el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
+			el = NS.dialog.getContentElement(NS.dialog._.currentTabId, i);
 
-			el.setText(NS.LocalizationComing[i]);
+			if(el) {
+				el = el.getElement();
+			} else {
+				el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
+			}
+
+			localizationID = obj[i].localizationID || i;
+			el.setText(NS.LocalizationComing[localizationID]);
 		}
 	};
 
 	var SetLocalizationLabel = function(obj) {
+		var el, localizationID;
 
 		for(var i in obj) {
-			if (!obj[i].instance.setLabel) {
-				return;
+			el = NS.dialog.getContentElement(NS.dialog._.currentTabId, i);
+
+			if(!el) {
+				el = obj[i].instance;
 			}
-			obj[i].instance.setLabel(NS.LocalizationComing[i]);
+
+			if(el.setLabel) {
+				localizationID = obj[i].localizationID || i;
+				el.setLabel(NS.LocalizationComing[localizationID] + ':');
+			}
 		}
 	};
 	var OptionsConfirm = function(state) {
@@ -523,9 +556,9 @@
 	NS.buildOptionSynonyms = function(key) {
 		var syn = NS.selectNodeResponce[key];
 
-		var select = getSelect( NS.selectNode['synonyms'] );
+		var select = getSelect( NS.selectNode['Synonyms'] );
 
-		NS.selectNode['synonyms'].clear();
+		NS.selectNode['Synonyms'].clear();
 
 		for (var i = 0; i < syn.length; i++) {
 			var option = document.createElement('option');
@@ -535,8 +568,8 @@
 			select.$.add(option, i);
 		}
 
-		NS.selectNode['synonyms'].getInputElement().$.firstChild.selected = true;
-		NS.textNode['Thesaurus'].setValue(NS.selectNode['synonyms'].getInputElement().getValue());
+		NS.selectNode['Synonyms'].getInputElement().$.firstChild.selected = true;
+		NS.textNode['Thesaurus'].setValue(NS.selectNode['Synonyms'].getInputElement().getValue());
 	};
 
 	var setBannerInPlace = function(htmlBanner) {
@@ -670,25 +703,33 @@
 	};
 
 	var disableButtonSuggest = function(word) {
-		if (word == 'no_any_suggestions') {
-			word = 'No suggestions';
-			NS.LocalizationButton['ChangeTo'].instance.disable();
-			NS.LocalizationButton['ChangeAll'].instance.disable();
-
-			var styleDisable = function(instanceButton) {
-				var button = NS.LocalizationButton[instanceButton].instance;
+		var changeToButton, changeAllButton,
+			styleDisable = function(instanceButton) {
+				var button = NS.dialog.getContentElement(NS.dialog._.currentTabId, instanceButton) || NS.LocalizationButton[instanceButton].instance;
 				button.getElement().hasClass('cke_disabled') ? button.getElement().setStyle('color', '#a0a0a0') : button.disable();
+			},
+			styleEnable = function(instanceButton) {
+				var button = NS.dialog.getContentElement(NS.dialog._.currentTabId, instanceButton) || NS.LocalizationButton[instanceButton].instance;
+				button.enable();
+				button.getElement().setStyle('color', '#333');
 			};
 
-			styleDisable('ChangeTo');
+		if (word == 'no_any_suggestions') {
+			word = 'No suggestions';
+
+			changeToButton = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'ChangeTo_button') || NS.LocalizationButton['ChangeTo_button'].instance;
+			changeToButton.disable();
+			changeAllButton = NS.dialog.getContentElement(NS.dialog._.currentTabId, 'ChangeAll') || NS.LocalizationButton['ChangeAll'].instance;
+			changeAllButton.disable();
+
+			styleDisable('ChangeTo_button');
 			styleDisable('ChangeAll');
 
 			return word;
 		} else {
-			NS.LocalizationButton['ChangeTo'].instance.enable();
-			NS.LocalizationButton['ChangeAll'].instance.enable();
-			NS.LocalizationButton['ChangeTo'].instance.getElement().setStyle('color', '#333');
-			NS.LocalizationButton['ChangeAll'].instance.getElement().setStyle('color', '#333');
+			styleEnable('ChangeTo_button');
+			styleEnable('ChangeAll');
+
 			return word;
 		}
 	};
@@ -783,10 +824,10 @@
 
 			NS.textNode['Thesaurus'].reset();
 
-			var select = getSelect( NS.selectNode['categories'] ),
+			var select = getSelect( NS.selectNode['Categories'] ),
 				count = 0;
 
-			NS.selectNode['categories'].clear();
+			NS.selectNode['Categories'].clear();
 
 			for (var i in response) {
 
@@ -798,8 +839,8 @@
 				count++
 			}
 
-			var synKey = NS.selectNode['categories'].getInputElement().getChildren().$[0].value;
-			NS.selectNode['categories'].getInputElement().getChildren().$[0].selected = true;
+			var synKey = NS.selectNode['Categories'].getInputElement().getChildren().$[0].value;
+			NS.selectNode['Categories'].getInputElement().getChildren().$[0].selected = true;
 			NS.buildOptionSynonyms(synKey);
 
 			showCurrentTabs();
@@ -1440,7 +1481,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 			editor.unlockSelection();
 
-			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name] && scaytInstance.setMarkupPaused) {
+			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name]) {
 				scaytInstance.setMarkupPaused(false);
 			}
 
@@ -1490,15 +1531,15 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 										children: [
 											{
 												type: 'text',
-												id: 'text',
-												label: NS.LocalizationLabel['ChangeTo'].text + ':',
+												id: 'ChangeTo_label',
+												label: NS.LocalizationLabel['ChangeTo_label'].text + ':',
 												labelLayout: 'horizontal',
 												labelStyle: 'font: 12px/25px arial, sans-serif;',
 												width: '140px',
 												'default': '',
 												onShow: function() {
 													NS.textNode['SpellTab'] = this;
-													NS.LocalizationLabel['ChangeTo'].instance = this;
+													NS.LocalizationLabel['ChangeTo_label'].instance = this;
 												},
 												onHide: function() {
 													this.reset();
@@ -1571,13 +1612,13 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 										children: [
 											{
 												type: 'button',
-												id: 'ChangeTo',
-												label: NS.LocalizationButton['ChangeTo'].text,
+												id: 'ChangeTo_button',
+												label: NS.LocalizationButton['ChangeTo_button'].text,
 												title: 'Change to',
 												style: 'width: 100%;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
-													NS.LocalizationButton['ChangeTo'].instance = this;
+													this.getElement().setAttribute("title-cmd", 'ChangeTo');
+													NS.LocalizationButton['ChangeTo_button'].instance = this;
 												},
 												onClick: handlerButtons
 											},
@@ -1607,13 +1648,13 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											},
 											{
 												type: 'button',
-												id: 'FinishChecking',
-												label: NS.LocalizationButton['FinishChecking'].text,
+												id: 'FinishChecking_button',
+												label: NS.LocalizationButton['FinishChecking_button'].text,
 												title: 'Finish Checking',
 												style: 'width: 100%;margin-top: 9px;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
-													NS.LocalizationButton['FinishChecking'].instance = this;
+													this.getElement().setAttribute("title-cmd", 'FinishChecking');
+													NS.LocalizationButton['FinishChecking_button'].instance = this;
 												},
 												onClick: handlerButtons
 											}
@@ -1650,7 +1691,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											},
 											{
 												type: 'button',
-												id: 'option',
+												id: 'Options',
 												label: NS.LocalizationButton['Options'].text,
 												title: 'Option',
 												style: 'width: 100%;',
@@ -1753,12 +1794,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 									},
 									{
 										type: 'button',
-										id: 'FinishChecking',
-										label: NS.LocalizationButton['FinishChecking'].text,
+										id: 'FinishChecking_button_block',
+										label: NS.LocalizationButton['FinishChecking_button_block'].text,
 										title: 'Finish Checking',
 										style: 'width: 100%;',
 										onLoad: function() {
-											this.getElement().setAttribute("title-cmd", this.id);
+											this.getElement().setAttribute("title-cmd", 'FinishChecking');
 										},
 										onClick: handlerButtons
 									}
@@ -1844,12 +1885,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 										children: [
 											{
 												type: 'button',
-												id: 'ChangeTo',
+												id: 'ChangeTo_button',
 												label: 'Change to',
 												title: 'Change to',
 												style: 'width: 133px; float: right;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
+													this.getElement().setAttribute("title-cmd", 'ChangeTo');
 												},
 												onClick: handlerButtons
 											},
@@ -1877,12 +1918,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											},
 											{
 												type: 'button',
-												id: 'FinishChecking',
-												label: 'Finish Checking',
+												id: 'FinishChecking_button',
+												label: NS.LocalizationButton['FinishChecking_button'].text,
 												title: 'Finish Checking',
 												style: 'width: 133px; float: right; margin-top: 9px;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
+													this.getElement().setAttribute("title-cmd", 'FinishChecking');
 												},
 												onClick: handlerButtons
 											}
@@ -1943,12 +1984,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 										children: [
 											{
 												type: 'button',
-												id: 'FinishChecking',
-												label: 'Finish Checking',
+												id: 'FinishChecking_button_block',
+												label: NS.LocalizationButton['FinishChecking_button_block'].text,
 												title: 'Finish Checking',
 												style: 'width: 100%;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
+													this.getElement().setAttribute("title-cmd", 'FinishChecking');
 												},
 												onClick: handlerButtons
 											}
@@ -2001,14 +2042,15 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												children: [
 													{
 														type: 'text',
-														id: 'ChangeTo',
-														label: 'Change to:',
+														id: 'ChangeTo_label',
+														label: NS.LocalizationLabel['ChangeTo_label'].text + ':',
 														labelLayout: 'horizontal',
 														inputStyle: 'width: 160px;',
 														labelStyle: 'font: 12px/25px arial, sans-serif;',
 														'default': '',
 														onShow: function(e) {
 															NS.textNode['Thesaurus'] = this;
+															NS.LocalizationLabel['ChangeTo_label'].instance = this;
 														},
 														onHide: function() {
 															this.reset();
@@ -2016,12 +2058,13 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													},
 													{
 														type: 'button',
-														id: 'ChangeTo',
-														label: 'Change to',
+														id: 'ChangeTo_button',
+														label: NS.LocalizationButton['ChangeTo_button'].text,
 														title: 'Change to',
 														style: 'width: 121px; margin-top: 1px;',
 														onLoad: function() {
-															this.getElement().setAttribute("title-cmd", this.id);
+															this.getElement().setAttribute("title-cmd", 'ChangeTo');
+															NS.LocalizationButton['ChangeTo_button'].instance = this;
 														},
 														onClick: handlerButtons
 													}
@@ -2032,14 +2075,15 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												children: [
 													{
 														type: 'select',
-														id: 'categories',
-														label: "Categories:",
+														id: 'Categories',
+														label: NS.LocalizationLabel['Categories'].text + ':',
 														labelStyle: 'font: 12px/25px arial, sans-serif;',
 														size: '5',
 														inputStyle: 'width: 180px; height: auto;',
 														items: [],
 														onShow: function() {
-															NS.selectNode['categories'] = this;
+															NS.selectNode['Categories'] = this;
+															NS.LocalizationLabel['Categories'].instance = this;
 														},
 														onChange: function() {
 															NS.buildOptionSynonyms(this.getValue());
@@ -2047,15 +2091,16 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 													},
 													{
 														type: 'select',
-														id: 'synonyms',
-														label: "Synonyms:",
+														id: 'Synonyms',
+														label: NS.LocalizationLabel['Synonyms'].text + ':',
 														labelStyle: 'font: 12px/25px arial, sans-serif;',
 														size: '5',
 														inputStyle: 'width: 180px; height: auto;',
 														items: [],
 														onShow: function() {
-															NS.selectNode['synonyms'] = this;
+															NS.selectNode['Synonyms'] = this;
 															NS.textNode['Thesaurus'].setValue(this.getValue());
+															NS.LocalizationLabel['Synonyms'].instance = this;
 														},
 														onChange: function(e) {
 															NS.textNode['Thesaurus'].setValue(this.getValue());
@@ -2084,12 +2129,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											},
 											{
 												type: 'button',
-												id: 'FinishChecking',
-												label: 'Finish Checking',
+												id: 'FinishChecking_button',
+												label: NS.LocalizationButton['FinishChecking_button'].text,
 												title: 'Finish Checking',
 												style: 'width: 121px; float: right; margin-top: 9px;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
+													this.getElement().setAttribute("title-cmd", 'FinishChecking');
 												},
 												onClick: handlerButtons
 											}
@@ -2149,12 +2194,12 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 										children: [
 											{
 												type: 'button',
-												id: 'FinishChecking',
-												label: 'Finish Checking',
+												id: 'FinishChecking_button_block',
+												label: NS.LocalizationButton['FinishChecking_button_block'].text,
 												title: 'Finish Checking',
 												style: 'width: 100%;',
 												onLoad: function() {
-													this.getElement().setAttribute("title-cmd", this.id);
+													this.getElement().setAttribute("title-cmd", 'FinishChecking');
 												},
 												onClick: handlerButtons
 											}
