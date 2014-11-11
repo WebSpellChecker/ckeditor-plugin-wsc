@@ -2132,7 +2132,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												id: 'FinishChecking_button',
 												label: NS.LocalizationButton['FinishChecking_button'].text,
 												title: 'Finish Checking',
-												style: 'width: 121px; float: right; margin-top: 9px;',
+												style: 'width: 100%; float: right; margin-top: 9px;',
 												onLoad: function() {
 													this.getElement().setAttribute("title-cmd", 'FinishChecking');
 												},
