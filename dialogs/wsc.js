@@ -464,19 +464,20 @@
 			that = scope._.contents[currentTab].Content,
 			tabID, iframe;
 
-
+		NS.previousTab = currentTab;
 		NS.setIframe(that, currentTab);
 
 		var loadNewTab = function(event) {
+			currentTab = scope._.currentTabId;
 			event = event || window.event;
 
 			if (!event.data.getTarget().is('a')) {
 				return;
 			}
 
-			if (currentTab == scope._.currentTabId) { return; }
+			if(currentTab === NS.previousTab) return;
+			NS.previousTab = currentTab;
 
-			currentTab = scope._.currentTabId;
 			that = scope._.contents[currentTab].Content;
 			tabID = NS.iframeNumber + '_' + currentTab;
 			NS.div_overlay.setEnable();
@@ -543,13 +544,16 @@
 				txt_option = document.createTextNode(sort[i][0]);
 				create_option.appendChild(txt_option);
 
-				if (sort[i][1] == NS.selectingLang) {
-					create_option.setAttribute("selected", "selected");
-				}
-
 				fragment.appendChild(create_option);
 			}
 			select.appendChild(fragment);
+		}
+
+		// make appropriate option selected according to current selected language
+		for (var j = 0; j < select.options.length; j++) {
+			if (select.options[j].value == NS.selectingLang) {
+				select.options[j].selected = "selected";
+			}
 		}
 	};
 
@@ -678,22 +682,41 @@
 			frameId = NS.iframeNumber + '_' + currentTabId;
 
 		NS.buildOptionLang(langSelectBox.setLangList, NS.dialog.getParentEditor().name);
-		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)]();
+		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)].onShow();
 		statusGrammarTab(NS.show_grammar);
 
-		selectContainer.onchange = function(e){
+		selectContainer.onchange = function(e) {
+			var langGroup = langSelectBox.getCurrentLangGroup(this.value),
+				currentTabId = NS.dialog._.currentTabId,
+				cmd;
+
 			e = e || window.event;
-			tabView[langSelectBox.getCurrentLangGroup(this.value)]();
+
+			tabView[langGroup].onShow();
 			statusGrammarTab(NS.show_grammar);
-
 			NS.div_overlay.setEnable();
-
 			NS.selectingLang = this.value;
+
+			// get command for current opened tan
+			cmd = NS.cmd[currentTabId];
+			// check whether current tab can be opened after language switching
+			if(!langGroup || !tabView[langGroup] || !tabView[langGroup].allowedTabCommands[cmd]) {
+				// if not so - set default tab to open after reload
+				cmd = tabView[langGroup].defaultTabCommand;
+			}
+
+			for(var key in NS.cmd) {
+				if(NS.cmd[key] == cmd) {
+					NS.previousTab = key;
+					break;
+				}
+			}
 
 			appTools.postMessage.send({
 			 	'message': {
 			 		'changeLang': NS.selectingLang,
-			 		'text': NS.dataTemp
+			 		'text': NS.dataTemp,
+			 		'cmd': cmd
 			 	},
 				'target': NS.targetFromFrame[frameId],
 				'id': 'selectionLang_outer__page'
@@ -1050,30 +1073,64 @@
 	};
 
 	var tabView = {
-		"superset"		: function() {
-			showThesaurusTab();
-			showGrammTab();
-			showSpellTab();
+		"superset": {
+			onShow: function() {
+				showThesaurusTab();
+				showGrammTab();
+				showSpellTab();
+			},
+			allowedTabCommands: {
+				"spell": true,
+				"grammar": true,
+				"thes": true
+			},
+			defaultTabCommand: "spell"
 		},
-		"usual"			: function() {
-			hideThesaurusTab();
-			hideGrammTab();
-			showSpellTab();
+		"usual": {
+			onShow: function() {
+				hideThesaurusTab();
+				hideGrammTab();
+				showSpellTab();
+			},
+			allowedTabCommands: {
+				"spell": true
+			},
+			defaultTabCommand: "spell"
 		},
-		"rtl"			: function() {
-			hideThesaurusTab();
-			hideGrammTab();
-			showSpellTab();
+		"rtl": {
+			onShow: function() {
+				hideThesaurusTab();
+				hideGrammTab();
+				showSpellTab();
+			},
+			allowedTabCommands: {
+				"spell": true
+			},
+			defaultTabCommand: "spell"
 		},
-		"spellgrammar"	: function() {
-			hideThesaurusTab();
-			showGrammTab();
-			showSpellTab();
+		"spellgrammar": {
+			onShow: function() {
+				hideThesaurusTab();
+				showGrammTab();
+				showSpellTab();
+			},
+			allowedTabCommands: {
+				"spell": true,
+				"grammar": true
+			},
+			defaultTabCommand: "spell"
 		},
-		"spellthes"		: function() {
-			showThesaurusTab();
-			hideGrammTab();
-			showSpellTab();
+		"spellthes": {
+			onShow: function() {
+				showThesaurusTab();
+				hideGrammTab();
+				showSpellTab();
+			},
+			allowedTabCommands: {
+				"spell": true,
+				"thes": true
+			},
+			defaultTabCommand: "spell"
 		}
 	};
 
@@ -1091,8 +1148,10 @@
 			};
 		};
 
-		var cmdM = new cmdManger(NS.cmd);
-		scope.selectPage(cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd));
+		var cmdM = new cmdManger(NS.cmd),
+			tabToOpen = cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd);
+
+		scope.selectPage(tabToOpen);
 		NS.sendData(scope);
 	};
 
@@ -1506,7 +1565,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						id: 'Content',
 						label: 'spellContent',
 						html: '',
-						setup: function(dialog) {// debugger;
+						setup: function(dialog) {
 							var tabId = NS.iframeNumber + '_' + dialog._.currentTabId;
 							var iframe = document.getElementById(tabId);
 							NS.targetFromFrame[tabId] = iframe.contentWindow;
