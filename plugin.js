@@ -17,7 +17,7 @@ CKEDITOR.plugins.add( 'wsc', {
 		editor.config.wsc_customLoaderScript = editor.config.wsc_customLoaderScript || CKEDITOR.config.wsc_customLoaderScript;
 
 		CKEDITOR.config.wsc_cmd = editor.config.wsc_cmd || CKEDITOR.config.wsc_cmd || 'spell'; // spell, thes or grammar. default tab
-		CKEDITOR.config.wsc_version="v4.3.0-wsc-dev-bcb1714";
+		CKEDITOR.config.wsc_version="v4.3.0-wsc-dev-771f52b";
 		CKEDITOR.config.wsc_removeGlobalVariable = true;
 	},
 	init: function( editor ) {

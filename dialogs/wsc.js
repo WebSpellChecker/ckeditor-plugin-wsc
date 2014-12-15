@@ -1502,7 +1502,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				NS.iframeNumber = NS.TextAreaNumber;
 				NS.templatePath = NS.pluginPath + 'dialogs/tmp.html';
 				NS.LangComparer.setDefaulLangCode( NS.defaultLanguage );
-				NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode );
+				NS.currentLang = editor.config.wsc_lang || NS.LangComparer.getSPLangCode( editor.langCode ) || 'en_US';
 				NS.selectingLang = NS.currentLang;
 				NS.div_overlay = new overlayBlock({
 					opacity: "1",
