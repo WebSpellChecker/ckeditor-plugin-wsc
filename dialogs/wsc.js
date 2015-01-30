@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
  (function() {
@@ -1461,6 +1461,8 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			showSpellTab();
 		},
 		onShow: function() {
+			NS.dialog = this;
+
 			editor.lockSelection(editor.getSelection());
 
 			NS.TextAreaNumber = 'cke_textarea_' + CKEDITOR.currentInstance.name;
