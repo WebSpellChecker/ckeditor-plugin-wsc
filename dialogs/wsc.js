@@ -181,6 +181,7 @@
 		NS.onLoadOverlay = null;
 		NS.LocalizationComing = {};
 		NS.OverlayPlace = null;
+		NS.sessionid = '';
 		NS.LocalizationButton = {
 			'ChangeTo_button': {
 				'instance' : null,
@@ -937,6 +938,7 @@
 			NS.show_grammar = response.show_grammar;
 			NS.langList = response.lang;
 			NS.bnr = response.bannerId;
+			NS.sessionid = response.sessionid;
 			if (response.bannerId) {
 				NS.setHeightBannerFrame();
 				setBannerInPlace(response.banner);
@@ -1063,7 +1065,8 @@
 				'cust_dic_ids': NS.cust_dic_ids,
 				'udn': NS.userDictionaryName,
 				'slang': NS.selectingLang,
-				'reset_suggest': reset_suggest
+				'reset_suggest': reset_suggest,
+				'sessionid': NS.sessionid
 			},
 			'target': frameTarget,
 			'id': 'data_outer__page'
@@ -1547,6 +1550,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			}
 
 			NS.dataTemp = '';
+			NS.sessionid = '';
 			appTools.postMessage.unbindHandler(handlerIncomingData);
 		},
 		contents: [
