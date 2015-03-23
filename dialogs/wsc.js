@@ -2348,7 +2348,6 @@ CKEDITOR.dialog.add('options', function(editor) {
 		osp = osp.toString().replace(/,/g, "");
 
 		appTools.cookie.set('osp', osp);
-		appTools.cookie.set('udn', nameNode.getValue());
 
 		appTools.postMessage.send({
 			'id': 'options_checkbox_send'
