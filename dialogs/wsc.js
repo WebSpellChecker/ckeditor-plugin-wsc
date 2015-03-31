@@ -1888,7 +1888,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 							scaytBasePathSsrvHost,
 							scaytBasePathSsrvPath;
 
-						if (SCAYT && SCAYT.CKSCAYT) {
+						if (window.SCAYT && window.SCAYT.CKSCAYT) {
 							scaytBasePath = SCAYT.CKSCAYT.prototype.basePath;
 							scaytBasePathSsrvProtocol = scaytBasePath.split('//')[0];
 							scaytBasePathSsrvHost = scaytBasePath.split('//')[1].split('/')[0];
@@ -1913,7 +1913,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				}
 
 				//wsc on scayt UserDictionary and UserDictionaryName synchronization
-				if (SCAYT && editor.wsc && editor.wsc.isSsrvSame) {
+				if (window.SCAYT && editor.wsc && editor.wsc.isSsrvSame) {
 					var cgiOrigin = editor.wsc.cgiOrigin();
 					editor.wsc.syncIsDone = false;
 
@@ -1941,16 +1941,37 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 					};
 
 					var udSynchronization = function(cookieUd) {
-						var localStorageUd = editor.wsc.getLocalStorageUD();
+						var localStorageUdArray = editor.wsc.getLocalStorageUD(),
+							cookieUdArray,
+							newUdArray = [],
+							newUd;
 
-						if (localStorageUd !== undefined) {
-							localStorageUd = localStorageUd.toString();
+						if (typeof(cookieUd) === 'string') {
+							cookieUdArray = cookieUd.split(',');
+						} else {
+							cookieUdArray = [];
 						}
 
-						if (localStorageUd !== '' && cookieUd !== localStorageUd && localStorageUd !== undefined) {
-							var newUD = localStorageUd.replace(cookieUd + ',', '');
+						if (Array.isArray(localStorageUdArray)) {
+							for (var i = 0; i < localStorageUdArray.length; i += 1) {
+								var word = localStorageUdArray[i];
+								var same = false;
+								for (var j = 0; j < cookieUdArray.length; j += 1) {
+									if (cookieUdArray[j] === word) {
+										same = true;
+									}
+								}
+
+								if (!same) {
+									newUdArray.push(word);
+								}
+							}
+							newUd = newUdArray.toString();
+						}
+
+						if (newUd !== undefined && newUd !== '') {
 							setTimeout(function() {
-								editor.wsc.addWords(newUD, function() {
+								editor.wsc.addWords(newUd, function() {
 									showFirstTab(NS.dialog);
 									NS.dialog.setupContent(NS.dialog);
 								});
