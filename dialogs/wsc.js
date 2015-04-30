@@ -1752,7 +1752,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			var url = editor.config.wsc.DefaultParams.serviceHost + editor.config.wsc.DefaultParams.ssrvHost +
 						'?cmd=dictionary&format=json&' +
 						'customerid=1%3AncttD3-fIoSf2-huzwE4-Y5muI2-mD0Tt-kG9Wz-UEDFC-tYu243-1Uq474-d9Z2l3&' +
-						'action=addword&word='+ words + '&callback=toString',
+						'action=addword&word='+ words + '&callback=toString&synchronization=true',
 				script = document.createElement('script');
 
 			script['type'] = 'text/javascript';
@@ -1776,6 +1776,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 			return cgiOrigin;
 		};
+		editor.wsc.isSsrvSame = false;
 	}
 
  return {
@@ -1790,7 +1791,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			showSpellTab();
 
 			//creating wsc object for UD synchronization between wsc and scayt
-			if (CKEDITOR.plugins.scayt) {
+			if (editor.plugins.scayt) {
 				createWscObjectForUdAndUdnSyncrhonization();
 			}
 		},
@@ -1866,24 +1867,53 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 					NS.dialog.setupContent(NS.dialog);
 				}
 
-				//is ssrv.cgi path for WSC and scayt same
-				editor.wsc.isSsrvSame = (function() {
-					var wscSsrvWholePath,
-						wscServiceHost = CKEDITOR.config.wsc.DefaultParams.serviceHost.replace('lf/22/js/../../../', ''),
-						wscSsrvHost = CKEDITOR.config.wsc.DefaultParams.ssrvHost,
-						scaytSsrvWholePath,
-						scaytSsrvProtocol = editor.config.scayt_serviceProtocol,
-						scaytSsrvHost = editor.config.scayt_serviceHost,ki
-						scaytSsrvPath = editor.config.scayt_servicePath;
+				if (editor.plugins.scayt) {
+					//is ssrv.cgi path for WSC and scayt same
+					editor.wsc.isSsrvSame = (function() {
+						var wscSsrvWholePath,
+							wscServiceHost = CKEDITOR.config.wsc.DefaultParams.serviceHost.replace('lf/22/js/../../../', '').split('//')[1],
+							wscSsrvHost = CKEDITOR.config.wsc.DefaultParams.ssrvHost,
+							scaytSsrvWholePath,
+							scaytSsrvProtocol,
+							scaytSsrvHost,
+							scaytSsrvPath,
 
-					wscSsrvWholePath = wscServiceHost + wscSsrvHost;
-					scaytSsrvWholePath = scaytSsrvProtocol + '://' + scaytSsrvHost + '/' + scaytSsrvPath;
+							scaytSrcUrl = editor.config.scayt_srcUrl,
+							scaytSsrvSrcUrlSsrvProtocol,
+							scaytSsrvSrcUrlSsrvHost,
+							scaytSsrvSrcUrlSsrvPath,
 
-					return wscSsrvWholePath === scaytSsrvWholePath;
-				})();
+							scaytBasePath,
+							scaytBasePathSsrvProtocol,
+							scaytBasePathSsrvHost,
+							scaytBasePathSsrvPath;
+
+						if (window.SCAYT && window.SCAYT.CKSCAYT) {
+							scaytBasePath = SCAYT.CKSCAYT.prototype.basePath;
+							scaytBasePathSsrvProtocol = scaytBasePath.split('//')[0];
+							scaytBasePathSsrvHost = scaytBasePath.split('//')[1].split('/')[0];
+							scaytBasePathSsrvPath = scaytBasePath.split(scaytBasePathSsrvHost + '/')[1].replace('/lf/scayt3/ckscayt/', '') + '/script/ssrv.cgi';
+						}
+
+						if (scaytSrcUrl && !scaytBasePath && !editor.config.scayt_servicePath) {
+							scaytSsrvSrcUrlSsrvProtocol = scaytSrcUrl.split('//')[0];
+							scaytSsrvSrcUrlSsrvHost = scaytSrcUrl.split('//')[1].split('/')[0];
+							scaytSsrvSrcUrlSsrvPath = scaytSrcUrl.split(scaytSsrvSrcUrlSsrvHost + '/')[1].replace('/lf/scayt3/ckscayt/ckscayt.js', '') + '/script/ssrv.cgi';
+						}
+
+						scaytSsrvProtocol = editor.config.scayt_serviceProtocol || scaytBasePathSsrvProtocol || scaytSsrvSrcUrlSsrvProtocol;
+						scaytSsrvHost = editor.config.scayt_serviceHost || scaytBasePathSsrvHost || scaytSsrvSrcUrlSsrvHost;
+						scaytSsrvPath = editor.config.scayt_servicePath || scaytBasePathSsrvPath || scaytSsrvSrcUrlSsrvPath;
+
+						wscSsrvWholePath = '//' + wscServiceHost + wscSsrvHost;
+						scaytSsrvWholePath = '//' + scaytSsrvHost + '/' + scaytSsrvPath;
+
+						return wscSsrvWholePath === scaytSsrvWholePath;
+					})();
+				}
 
 				//wsc on scayt UserDictionary and UserDictionaryName synchronization
-				if (SCAYT && editor.wsc.isSsrvSame) {
+				if (window.SCAYT && editor.wsc && editor.wsc.isSsrvSame) {
 					var cgiOrigin = editor.wsc.cgiOrigin();
 					editor.wsc.syncIsDone = false;
 
@@ -1911,16 +1941,16 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 					};
 
 					var udSynchronization = function(cookieUd) {
-						var localStorageUd = editor.wsc.getLocalStorageUD();
+						var localStorageUdArray = editor.wsc.getLocalStorageUD(),
+							newUd;
 
-						if (localStorageUd !== undefined) {
-							localStorageUd = localStorageUd.toString();
+						if (localStorageUdArray instanceof Array) {
+							newUd = localStorageUdArray.toString();
 						}
 
-						if (localStorageUd !== '' && cookieUd !== localStorageUd && localStorageUd !== undefined) {
-							var newUD = localStorageUd.replace(cookieUd + ',', '');
+						if (newUd !== undefined && newUd !== '') {
 							setTimeout(function() {
-								editor.wsc.addWords(newUD, function() {
+								editor.wsc.addWords(newUd, function() {
 									showFirstTab(NS.dialog);
 									NS.dialog.setupContent(NS.dialog);
 								});
@@ -1965,7 +1995,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			appTools.postMessage.unbindHandler(handlerIncomingData);
 
 			//scayt on wsc UserDictionary and UserDictionaryName synchronization
-			if (CKEDITOR.plugins.scayt && editor.wsc.isSsrvSame) {
+			if (editor.plugins.scayt && editor.wsc && editor.wsc.isSsrvSame) {
 				var	wscUDN = editor.wsc.udn,
 					wscUD = editor.wsc.ud,
 					wscUDarray,
@@ -2005,7 +2035,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						wscUDarray = wscUD.split(',');
 						editor.wsc.DataStorage.setData('scayt_user_dictionary', wscUDarray);
 					}
-
 				}
 			}
 		},
