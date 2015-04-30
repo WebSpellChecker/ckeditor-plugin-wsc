@@ -227,7 +227,7 @@
 				'instance' : null,
 				'text' : 'Finish Checking',
 				'localizationID': 'FinishChecking'
-			},
+			}
 		};
 
 		NS.LocalizationLabel = {
@@ -909,17 +909,22 @@
 
 		},
 		ReplaceText: function(response) {
+
 			delete response.id;
 			NS.div_overlay.setEnable();
 
 			NS.dataTemp = response.text;
 			NS.selectingLang = response.currentLang;
 
-			window.setTimeout(function() {
-				try {
-					NS.div_overlay.setDisable();
-				} catch(e) {}
-			}, 500);
+			if (response.cmd = 'spell' && response.len !== '0' && response.len) {
+				NS.div_overlay.setDisable();
+			} else {
+				window.setTimeout(function() {
+					try {
+						NS.div_overlay.setDisable();
+					} catch(e) {}
+				}, 500);
+			}
 
 			SetLocalizationButton(NS.LocalizationButton);
 			SetLocalizationLabel(NS.LocalizationLabel);
@@ -1365,7 +1370,6 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				frameId = NS.iframeNumber + '_' + currentTabId,
 				new_word = NS.textNode[currentTabId].getValue(),
 				cmd = this.getElement().getAttribute("title-cmd");
-
 
 			appTools.postMessage.send({
 				'message': {
