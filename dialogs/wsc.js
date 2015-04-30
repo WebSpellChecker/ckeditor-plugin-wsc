@@ -1752,7 +1752,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 			var url = editor.config.wsc.DefaultParams.serviceHost + editor.config.wsc.DefaultParams.ssrvHost +
 						'?cmd=dictionary&format=json&' +
 						'customerid=1%3AncttD3-fIoSf2-huzwE4-Y5muI2-mD0Tt-kG9Wz-UEDFC-tYu243-1Uq474-d9Z2l3&' +
-						'action=addword&word='+ words + '&callback=toString',
+						'action=addword&word='+ words + '&callback=toString&synchronization=true',
 				script = document.createElement('script');
 
 			script['type'] = 'text/javascript';
@@ -1942,31 +1942,10 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 					var udSynchronization = function(cookieUd) {
 						var localStorageUdArray = editor.wsc.getLocalStorageUD(),
-							cookieUdArray,
-							newUdArray = [],
 							newUd;
 
-						if (typeof(cookieUd) === 'string') {
-							cookieUdArray = cookieUd.split(',');
-						} else {
-							cookieUdArray = [];
-						}
-
-						if (Array.isArray(localStorageUdArray)) {
-							for (var i = 0; i < localStorageUdArray.length; i += 1) {
-								var word = localStorageUdArray[i];
-								var same = false;
-								for (var j = 0; j < cookieUdArray.length; j += 1) {
-									if (cookieUdArray[j] === word) {
-										same = true;
-									}
-								}
-
-								if (!same) {
-									newUdArray.push(word);
-								}
-							}
-							newUd = newUdArray.toString();
+						if (localStorageUdArray instanceof Array) {
+							newUd = localStorageUdArray.toString();
 						}
 
 						if (newUd !== undefined && newUd !== '') {
