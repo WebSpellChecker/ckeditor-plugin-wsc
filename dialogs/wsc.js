@@ -1804,9 +1804,9 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 			editor.lockSelection(editor.getSelection());
 
-			NS.TextAreaNumber = 'cke_textarea_' + CKEDITOR.currentInstance.name;
+			NS.TextAreaNumber = 'cke_textarea_' + editor.name;
 			appTools.postMessage.init(handlerIncomingData);
-			NS.dataTemp = CKEDITOR.currentInstance.getData();
+			NS.dataTemp = editor.getData();
 			//NS.div_overlay.setDisable();
 			NS.OverlayPlace = NS.dialog.parts.tabs.getParent().$;
 			if(CKEDITOR && CKEDITOR.config){
