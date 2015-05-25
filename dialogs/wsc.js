@@ -227,7 +227,7 @@
 				'instance' : null,
 				'text' : 'Finish Checking',
 				'localizationID': 'FinishChecking'
-			},
+			}
 		};
 
 		NS.LocalizationLabel = {
