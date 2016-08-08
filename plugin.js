@@ -21,6 +21,12 @@ CKEDITOR.plugins.add( 'wsc', {
 		CKEDITOR.config.wsc_version="v4.3.0-master-d769233";
 		CKEDITOR.config.wsc_removeGlobalVariable = true;
 	},
+	onLoad: function(editor){
+		// Append skin specific stylesheet fo moono-lisa skin.
+		if ( ( CKEDITOR.skinName || editor.config.skin ) == 'moono-lisa' ) {
+			CKEDITOR.document.appendStyleSheet( this.path + 'skins/' + CKEDITOR.skin.name + '/wsc.css' );
+		}
+	},
 	init: function( editor ) {
 		var commandName = 'checkspell';
 
