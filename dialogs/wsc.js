@@ -2049,6 +2049,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						id: 'bottomGroup',
 						style: 'width:560px; margin: 0 auto;',
 						widths: ['50%', '50%'],
+						className: 'wsc-spelltab-bottom',
 						children: [
 							{
 								type: 'hbox',
