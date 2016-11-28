@@ -431,6 +431,8 @@
 		iframe.document.open();
 		iframe.document.write(iframeInnerHtml);
 		iframe.document.close();
+		NS.div_overlay.setEnable();
+		iframeOnload = true;
 	};
 
 	NS.setCurrentIframe = function(currentTab) {
@@ -769,8 +771,6 @@
 
 	var handlerId = {
 		iframeOnload: function(response) {
-			NS.div_overlay.setEnable();
-			iframeOnload = true;
 			var currentTab = NS.dialog._.currentTabId,
 				tabId = NS.iframeNumber + '_' + currentTab;
 			sendData(NS.targetFromFrame[tabId], NS.cmd[currentTab]);
