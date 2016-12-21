@@ -431,6 +431,8 @@
 		iframe.document.open();
 		iframe.document.write(iframeInnerHtml);
 		iframe.document.close();
+		NS.div_overlay.setEnable();
+		iframeOnload = true;
 	};
 
 	NS.setCurrentIframe = function(currentTab) {
@@ -769,8 +771,6 @@
 
 	var handlerId = {
 		iframeOnload: function(response) {
-			NS.div_overlay.setEnable();
-			iframeOnload = true;
 			var currentTab = NS.dialog._.currentTabId,
 				tabId = NS.iframeNumber + '_' + currentTab;
 			sendData(NS.targetFromFrame[tabId], NS.cmd[currentTab]);
@@ -1793,7 +1793,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				NS.userDictionaryName = editor.config.wsc_userDictionaryName;
 				NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
 				var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
-				var wscCoreUrl = editor.config.wsc_customLoaderScript  || ( protocol + '//loader.webspellchecker.net/sproxy_fck/sproxy.php?plugin=fck2&customerid=' + NS.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
+				var wscCoreUrl = editor.config.wsc_customLoaderScript  || ( protocol + '//www.webspellchecker.net/spellcheck3/script/ssrv.cgi?plugin=fck2&customerid=' + NS.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
 			} else {
 				NS.dialog.hide();
 				return;
@@ -2102,7 +2102,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						 									{
 																type: 'html',
 																id: 'logo',
-																html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+																html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
 																setup: function(dialog) {
 																	this.getElement().$.src = NS.logotype;
 																	this.getElement().getParent().setStyles({
@@ -2285,7 +2285,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 									{
 										type: 'html',
 										id: 'logo',
-										html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">'
+										html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">'
 									}
 								]
 							}
@@ -2493,7 +2493,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											{
 												type: 'html',
 												id: 'logo',
-												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
@@ -2652,7 +2652,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												type: 'html',
 												id: 'logotype',
 												label: 'WebSpellChecker.net',
-												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
@@ -2703,7 +2703,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											{
 												type: 'html',
 												id: 'logo',
-												html: '<img width="99" height="68" border="0" src="" title="WebSpellChecker.net" alt="WebSpellChecker.net" style="display: inline-block;">',
+												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
