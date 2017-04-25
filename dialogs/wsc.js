@@ -267,8 +267,10 @@
 
 			if(el) {
 				el = el.getElement();
-			} else {
+			} else if(obj[i].instance){
 				el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
+			} else{
+				continue;
 			}
 
 			localizationID = obj[i].localizationID || i;
