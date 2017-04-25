@@ -223,6 +223,12 @@
 				'localizationID': 'FinishChecking'
 			},
 
+			'Option_button': {
+				'instance' : null,
+				'text' : 'Options',
+				'localizationID': 'Options'
+			},
+
 			'FinishChecking_button_block': {
 				'instance' : null,
 				'text' : 'Finish Checking',
