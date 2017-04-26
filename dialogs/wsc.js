@@ -1180,6 +1180,7 @@
 		var cmdM = new cmdManger(NS.cmd),
 			tabToOpen = cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd);
 
+		showCurrentTabs();
 		scope.selectPage(tabToOpen);
 		NS.sendData(scope);
 	};
