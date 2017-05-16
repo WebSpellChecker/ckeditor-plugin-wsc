@@ -223,6 +223,12 @@
 				'localizationID': 'FinishChecking'
 			},
 
+			'Option_button': {
+				'instance' : null,
+				'text' : 'Options',
+				'localizationID': 'Options'
+			},
+
 			'FinishChecking_button_block': {
 				'instance' : null,
 				'text' : 'Finish Checking',
@@ -261,8 +267,10 @@
 
 			if(el) {
 				el = el.getElement();
-			} else {
+			} else if(obj[i].instance){
 				el = obj[i].instance.getElement().getFirst() || obj[i].instance.getElement();
+			} else{
+				continue;
 			}
 
 			localizationID = obj[i].localizationID || i;
@@ -1172,6 +1180,7 @@
 		var cmdM = new cmdManger(NS.cmd),
 			tabToOpen = cmdM.getCmdByTab(CKEDITOR.config.wsc_cmd);
 
+		showCurrentTabs();
 		scope.selectPage(tabToOpen);
 		NS.sendData(scope);
 	};
