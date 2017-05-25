@@ -121,12 +121,13 @@ CKEDITOR.plugins.add( 'wsc', {
  */
 
 /**
- * The parameter sets the default spellchecking language for WSC.
- * Possible values are:
- * `'en_US'`, `'en_GB'`, `'pt_BR'`, `'da_DK'`,
- * `'nl_NL'`, `'en_CA'`, `'fi_FI'`, `'fr_FR'`,
- * `'fr_CA'`, `'de_DE'`, `'el_GR'`, `'it_IT'`,
- * `'nb_NO'`, `'pt_PT'`, `'es_ES'`, `'sv_SE'`.
+ * The parameter sets the default spellchecking language for WSC. Possible values are:
+ * `'da_DK'`, `'de_DE'`, `'el_GR'`, `'en_CA'`,
+ * `'en_GB'`, `'en_US'`, `'es_ES'`, `'fi_FI'`,
+ * `'fr_CA'`, `'fr_FR'`, `'it_IT'`, `'nb_NO'`
+ * `'nl_NL'`, `'sv_SE'`.
+ *
+ * Customers with dedicated WebSpellChecker license may also set `'pt_BR'` and `'pt_PT'`.
  *
  * Further details available at [http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages](http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages)
  *
