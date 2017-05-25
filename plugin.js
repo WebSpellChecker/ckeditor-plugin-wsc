@@ -128,7 +128,7 @@ CKEDITOR.plugins.add( 'wsc', {
  * `'fr_CA'`, `'de_DE'`, `'el_GR'`, `'it_IT'`,
  * `'nb_NO'`, `'pt_PT'`, `'es_ES'`, `'sv_SE'`.
  *
- * Further details available at [http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages](http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages)
+ * Note: 'pt_PT' and 'pt_BR' are not available in the Free version. The further details available at [http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages](http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages)
  *
  *		config.wsc_lang = 'de_DE';
  *
