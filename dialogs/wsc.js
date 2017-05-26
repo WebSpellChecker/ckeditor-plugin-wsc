@@ -690,10 +690,15 @@
 			selectId = "wscLang" + NS.dialog.getParentEditor().name,
 			selectContainer = document.getElementById(selectId),
 			currentTabId = NS.dialog._.currentTabId,
+			langGroup,
 			frameId = NS.iframeNumber + '_' + currentTabId;
 
 		NS.buildOptionLang(langSelectBox.setLangList, NS.dialog.getParentEditor().name);
-		tabView[langSelectBox.getCurrentLangGroup(NS.selectingLang)].onShow();
+
+		langGroup = langSelectBox.getCurrentLangGroup(NS.selectingLang);
+		if(langGroup) {
+			tabView[langGroup].onShow();
+		}
 		statusGrammarTab(NS.show_grammar);
 
 		selectContainer.onchange = function(e) {
