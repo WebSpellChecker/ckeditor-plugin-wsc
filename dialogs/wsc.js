@@ -2116,7 +2116,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 						 									{
 																type: 'html',
 																id: 'logo',
-																html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
+																html: '',
 																setup: function(dialog) {
 																	this.getElement().$.src = NS.logotype;
 																	this.getElement().getParent().setStyles({
@@ -2299,7 +2299,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 									{
 										type: 'html',
 										id: 'logo',
-										html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">'
+										html: ''
 									}
 								]
 							}
@@ -2507,7 +2507,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											{
 												type: 'html',
 												id: 'logo',
-												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
+												html: '',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
@@ -2666,7 +2666,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 												type: 'html',
 												id: 'logotype',
 												label: 'WebSpellChecker.net',
-												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
+												html: '',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
@@ -2717,7 +2717,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 											{
 												type: 'html',
 												id: 'logo',
-												html: '<img width="99" height="68" border="0" src="" title="logo" alt="logo" style="display: inline-block;">',
+												html: '',
 												setup: function() {
 													this.getElement().$.src = NS.logotype;
 													this.getElement().getParent().setStyles({
