@@ -148,3 +148,43 @@ CKEDITOR.plugins.add( 'wsc', {
  * @cfg {String} [wsc_cmd='spell']
  * @member CKEDITOR.config
  */
+
+/**
+ * The parameter sets width of the WSC pop-up window. Specified in pixels.
+ *
+ *		// Set the pop-up width.
+ *		config.wsc_width = 800;
+ *
+ * @cfg {String} [wsc_width=580]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * The parameter sets height of the WSC pop-up window. Specified in pixels.
+ *
+ *		// Set the pop-up height.
+ *		config.wsc_height = 800;
+ *
+ * @cfg {String} [wsc_height = Content based.]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * The parameter sets left margin of the WSC pop-up window. Specified in pixels.
+ *
+ *		// Set left margin.
+ *		config.wsc_left = 0;
+ *
+ * @cfg {String} [wsc_left = In the middle of the screen.]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * The parameter sets top margin of the WSC pop-up window. Specified in pixels.
+ *
+ *		// Sets top margin.
+ *		config.wsc_top = 0;
+ *
+ * @cfg {String} [wsc_top = In the middle of the screen.]
+ * @member CKEDITOR.config
+ */
