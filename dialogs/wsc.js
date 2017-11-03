@@ -1807,7 +1807,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				NS.userDictionaryName = editor.config.wsc_userDictionaryName;
 				NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
 				var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
-				var wscCoreUrl = editor.config.wsc_customLoaderScript  || ( protocol + '//www.webspellchecker.net/spellcheck3/script/ssrv.cgi?plugin=fck2&customerid=' + NS.wsc_customerId + '&cmd=script&doc=wsc&schema=22');
+				var wscCoreUrl = editor.config.wsc_customLoaderScript  || ( protocol + '//www.webspellchecker.net/spellcheck31/lf/22/js/wsc_fck2plugin.js');
 			} else {
 				NS.dialog.hide();
 				return;
