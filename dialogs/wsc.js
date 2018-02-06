@@ -901,7 +901,7 @@
 				scaytInstance = editor.scayt;
 
 			//scayt on wsc UserDictionary and UserDictionaryName synchronization
-			if (scaytPlugin && editor.wsc && editor.wsc.isSsrvSame) {
+			if (scaytPlugin && editor.wsc) {
 				var	wscUDN = editor.wsc.udn,
 					wscUD = editor.wsc.ud,
 					wscUDarray,
@@ -1947,7 +1947,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				}
 
 				//wsc on scayt UserDictionary and UserDictionaryName synchronization
-				if (window.SCAYT && editor.wsc && editor.wsc.isSsrvSame) {
+				if (window.SCAYT && editor.wsc) {
 					var cgiOrigin = editor.wsc.cgiOrigin();
 					editor.wsc.syncIsDone = false;
 
