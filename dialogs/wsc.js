@@ -896,19 +896,57 @@
 			delete response.id;
 
 			var command = NS.dialog.getParentEditor().getCommand( 'checkspell' ),
-				editor = NS.dialog.getParentEditor();
+				editor = NS.dialog.getParentEditor(),
+				scaytPlugin = CKEDITOR.plugins.scayt,
+				scaytInstance = editor.scayt;
 
-			//set local storage for synchronization before scayt reinit
-			if (editor.scayt && editor.wsc.isSsrvSame) {
-				var	wscUDN = editor.wsc.udn;
+			//scayt on wsc UserDictionary and UserDictionaryName synchronization
+			if (scaytPlugin && editor.wsc) {
+				var	wscUDN = editor.wsc.udn,
+					wscUD = editor.wsc.ud,
+					wscUDarray,
+					i;
+
+				if (scaytInstance) { // if SCAYT active
+					if(scaytPlugin.state.scayt[editor.name]) {
+						scaytInstance.setMarkupPaused(false);
+					}
+
+					if (!wscUDN) {
+						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
+						scaytInstance.removeUserDictionary();
+					} else {
+						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
+						scaytInstance.restoreUserDictionary(wscUDN);
+					}
+
+					if (wscUD) {
+						setTimeout(function() {
+							wscUDarray = wscUD.split(',');
+							for (i = 0; i < wscUDarray.length; i += 1) {
+								scaytInstance.addWordToUserDictionary(wscUDarray[i]);
+							}
+						}, 200); //wait for 'removeUserDictionary' command response
+					}
+
+					if (!wscUD) {
+						editor.wsc.DataStorage.setData('scayt_user_dictionary', []);
+					}
+
+				} else { //if SCAYT not active
 
 					if (!wscUDN) {
 						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
 					} else {
 						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
 					}
-			}
 
+					if (wscUD) {
+						wscUDarray = wscUD.split(',');
+						editor.wsc.DataStorage.setData('scayt_user_dictionary', wscUDarray);
+					}
+				}
+			}
 
 			try {
 				editor.focus();
@@ -1909,7 +1947,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				}
 
 				//wsc on scayt UserDictionary and UserDictionaryName synchronization
-				if (window.SCAYT && editor.wsc && editor.wsc.isSsrvSame) {
+				if (window.SCAYT && editor.wsc) {
 					var cgiOrigin = editor.wsc.cgiOrigin();
 					editor.wsc.syncIsDone = false;
 
@@ -1977,62 +2015,11 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 
 		},
 		onHide: function() {
-			var scaytPlugin = CKEDITOR.plugins.scayt,
-				scaytInstance = editor.scayt;
-
 			editor.unlockSelection();
-
-			if(scaytPlugin && scaytInstance && scaytPlugin.state[editor.name]) {
-				scaytInstance.setMarkupPaused(false);
-			}
 
 			NS.dataTemp = '';
 			NS.sessionid = '';
 			appTools.postMessage.unbindHandler(handlerIncomingData);
-
-			//scayt on wsc UserDictionary and UserDictionaryName synchronization
-			if (editor.plugins.scayt && editor.wsc && editor.wsc.isSsrvSame) {
-				var	wscUDN = editor.wsc.udn,
-					wscUD = editor.wsc.ud,
-					wscUDarray,
-					i;
-
-				if (editor.scayt) { // if SCAYT active
-					if (!wscUDN) {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
-						editor.scayt.removeUserDictionary();
-					} else {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
-						editor.scayt.restoreUserDictionary(wscUDN);
-					}
-
-					if (wscUD) {
-						setTimeout(function() {
-							wscUDarray = wscUD.split(',');
-							for (i = 0; i < wscUDarray.length; i += 1) {
-								editor.scayt.addWordToUserDictionary(wscUDarray[i]);
-							}
-						}, 200); //wait for 'removeUserDictionary' command response
-					}
-
-					if (!wscUD) {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary', []);
-					}
-
-				} else { //if SCAYT not active
-
-					if (!wscUDN) {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
-					} else {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
-					}
-
-					if (wscUD) {
-						wscUDarray = wscUD.split(',');
-						editor.wsc.DataStorage.setData('scayt_user_dictionary', wscUDarray);
-					}
-				}
-			}
 		},
 		contents: [
 			{
