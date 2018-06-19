@@ -894,6 +894,17 @@
 		},
 		settext: function(response) {
 			delete response.id;
+			function setData() {
+				try {
+					editor.focus();
+				} catch(e) {}
+				editor.setData(response.text, function(){
+					NS.dataTemp = '';
+					editor.unlockSelection();
+					editor.fire('saveSnapshot');
+					NS.dialog.hide();
+				});
+			}
 
 			var command = NS.dialog.getParentEditor().getCommand( 'checkspell' ),
 				editor = NS.dialog.getParentEditor(),
@@ -908,31 +919,28 @@
 					i;
 
 				if (scaytInstance) { // if SCAYT active
-					if(scaytPlugin.state.scayt[editor.name]) {
-						scaytInstance.setMarkupPaused(false);
-					}
-
-					if (!wscUDN) {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
-						scaytInstance.removeUserDictionary();
-					} else {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
-						scaytInstance.restoreUserDictionary(wscUDN);
-					}
-
-					if (wscUD) {
-						setTimeout(function() {
+					function udActionCallback() {
+						if (wscUD) {
 							wscUDarray = wscUD.split(',');
 							for (i = 0; i < wscUDarray.length; i += 1) {
 								scaytInstance.addWordToUserDictionary(wscUDarray[i]);
 							}
-						}, 200); //wait for 'removeUserDictionary' command response
+						}else {
+							editor.wsc.DataStorage.setData('scayt_user_dictionary', []);
+						}
+						setData();
 					}
 
-					if (!wscUD) {
-						editor.wsc.DataStorage.setData('scayt_user_dictionary', []);
+					if(scaytPlugin.state.scayt[editor.name]) {
+						scaytInstance.setMarkupPaused(false);
 					}
-
+					if (!wscUDN) {
+						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', '');
+						scaytInstance.removeUserDictionary(undefined, udActionCallback, udActionCallback);
+					} else {
+						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
+						scaytInstance.restoreUserDictionary(wscUDN, udActionCallback, udActionCallback);
+					}
 				} else { //if SCAYT not active
 
 					if (!wscUDN) {
@@ -945,20 +953,9 @@
 						wscUDarray = wscUD.split(',');
 						editor.wsc.DataStorage.setData('scayt_user_dictionary', wscUDarray);
 					}
+					setData();
 				}
 			}
-
-			try {
-				editor.focus();
-			} catch(e) {}
-
-			editor.setData(response.text, function(){
-				NS.dataTemp = '';
-				editor.unlockSelection();
-				editor.fire('saveSnapshot');
-				NS.dialog.hide();
-			});
-
 		},
 		ReplaceText: function(response) {
 
