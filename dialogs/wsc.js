@@ -939,7 +939,7 @@
 						scaytInstance.removeUserDictionary(undefined, udActionCallback, udActionCallback);
 					} else {
 						editor.wsc.DataStorage.setData('scayt_user_dictionary_name', wscUDN);
-						scaytInstance.restoreUserDictionary(wscUDN, udActionCallback);
+						scaytInstance.restoreUserDictionary(wscUDN, udActionCallback, udActionCallback);
 					}
 				} else { //if SCAYT not active
 
