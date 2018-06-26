@@ -955,6 +955,8 @@
 					}
 					setData();
 				}
+			} else {
+				setData();
 			}
 		},
 		ReplaceText: function(response) {
