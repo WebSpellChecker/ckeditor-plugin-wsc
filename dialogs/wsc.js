@@ -1096,7 +1096,12 @@
 
 	var handlerIncomingData = function(event) {
 		event = event || window.event;
-		var response = window.JSON.parse(event.data);
+		
+		var response;
+
+		try {
+			response = window.JSON.parse(event.data);
+		} catch (e) {}
 
 		if(response && response.id) {
 			handlerId[response.id](response);

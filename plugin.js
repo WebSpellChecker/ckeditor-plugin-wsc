@@ -24,7 +24,7 @@ CKEDITOR.plugins.add( 'wsc', {
 	onLoad: function(editor){
 		// Append skin specific stylesheet fo moono-lisa skin.
 		if ( ( CKEDITOR.skinName || editor.config.skin ) == 'moono-lisa' ) {
-			CKEDITOR.document.appendStyleSheet( this.path + 'skins/' + CKEDITOR.skin.name + '/wsc.css' );
+			CKEDITOR.document.appendStyleSheet( CKEDITOR.getUrl(this.path + 'skins/' + CKEDITOR.skin.name + '/wsc.css') );
 		}
 	},
 	init: function( editor ) {
