@@ -1,0 +1,26 @@
+{
+  "name": "ckeditor-plugin-wsc",
+  "version": "5.7.0",
+  "description": "WebSpellChecker Dialog plugin for CKEditor 4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WebSpellChecker/ckeditor-plugin-wsc.git"
+  },
+  "author": "WebSpellChecker (https://webspellchecker.com/)",
+  "bugs": {
+    "url": "https://github.com/WebSpellChecker/ckeditor-plugin-wsc/issues"
+  },
+  "homepage": "https://github.com/WebSpellChecker/ckeditor-plugin-wsc#readme",
+  "license": "(GPL-2.0-or-later OR LGPL-2.1 OR MPL-1.1)",
+  "keywords": [
+    "spelling checking",
+    "grammar checking",
+    "spellcheck",
+    "spelling checker for ckeditor 4",
+    "grammar checker for ckeditor 4",
+    "text proofreading in CKEditor 4",
+    "webspellchecker",
+    "ckeditor 4",
+    "WebSpellChecker Dialog"
+  ]
+}
