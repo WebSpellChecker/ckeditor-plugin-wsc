@@ -1,4 +1,6 @@
-﻿WebSpellChecker Dialog plugin for CKEditor 4
+Imprortant! WebSpellChecker Dialog plugin for CKEditor 4 is appoaching its end-of-life (EOL) in 2021. Find out more in our [blog post](https://webspellchecker.com/blog/2020/12/02/end-of-life-for-spell-checker-dialog-plugin-for-ckeditor-4/) about its termination schedule.
+
+WebSpellChecker Dialog plugin for CKEditor 4
 ===============================
 
 WebSpellChecker Dialog (WSC Dialog) provides distraction-free proofreading, checking the whole text’s spelling and grammar on-click in a separate pop-up window.
