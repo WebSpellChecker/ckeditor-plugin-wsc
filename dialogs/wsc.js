@@ -1848,8 +1848,7 @@ CKEDITOR.dialog.add('checkspell', function(editor) {
 				NS.cust_dic_ids = editor.config.wsc_customDictionaryIds;
 				NS.userDictionaryName = editor.config.wsc_userDictionaryName;
 				NS.defaultLanguage = CKEDITOR.config.defaultLanguage;
-				var	protocol = document.location.protocol == "file:" ? "http:" : document.location.protocol;
-				var wscCoreUrl = editor.config.wsc_customLoaderScript  || ( protocol + '//www.webspellchecker.net/spellcheck31/lf/22/js/wsc_fck2plugin.js');
+				var wscCoreUrl = editor.config.wsc_customLoaderScript || 'https://www.webspellchecker.net/spellcheck31/lf/22/js/wsc_fck2plugin.js';
 			} else {
 				NS.dialog.hide();
 				return;
