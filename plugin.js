@@ -133,7 +133,7 @@ CKEDITOR.plugins.add( 'wsc', {
  *
  * Customers with dedicated WebSpellChecker license may also set `'pt_BR'` and `'pt_PT'`.
  *
- * Further details available at [http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages](http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages)
+ * Note: 'pt_PT' and 'pt_BR' are not available in the Free version. The further details available at [http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages](http://wiki.webspellchecker.net/doku.php?id=installationandconfiguration:supportedlanguages)
  *
  *		config.wsc_lang = 'de_DE';
  *
